@@ -8,6 +8,19 @@ BERLIN_BASE_URL = "https://service.berlin.de/terminvereinbarung/termin/all/12070
 BREMEN_BASE_URL = "https://termin.bremen.de/termine/select2?md=5"
 
 DUESSELDORF = {
+    "offices": [
+        "Benrath",
+        "Bilk",
+        "Dienstleistungszentrum",
+        "Eller",
+        "Garath",
+        "Gerresheim",
+        "Kaiserswerth",
+        "Oberkassel",
+        "Rath",
+        "Unterbach",
+        "Wersten/Holthausen",
+    ],
     "base_url": "https://termine.duesseldorf.de",
     "einwohnerangelegenheiten": {
         "id": "buttonfunktionseinheit-4",
