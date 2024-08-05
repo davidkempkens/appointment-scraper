@@ -102,6 +102,21 @@ BREMEN = {
 }
 
 DRESDEN = {
+    "offices": [
+        "Altstadt",
+        "Blasewitz",
+        "Cossebaude",
+        "Cotta",
+        "Junioramt",
+        "Klotzsche",
+        "Langenbrueck",
+        "Leuben",
+        "Neustadt",
+        "Pieschen",
+        "Plauen",
+        "Prohlis",
+        "Weixdorf",
+    ],
     "base_url": "https://termine-buergerbuero.dresden.de/select2?md=2",
     "buergerbueros": {
         "name": "Bürgerbüros",
