@@ -26,7 +26,7 @@ class Slot:
         created: datetime | str - the date the slot was available for the first time
         updated: datetime | str - the date the slot was not available for the first time
         """
-        self.office = office
+        self.office = convert_german_vowels(office)
         self.date = self.convert_to_datetime(date)
         self.concern = concern
         self.created: datetime | str = self.convert_to_datetime(created)
@@ -64,6 +64,10 @@ def difference(A: list[Slot], B: list[Slot]) -> list[Slot]:
     returns all slots in A that are not in B
     """
     return [a for a in A if a not in B]
+
+
+def convert_german_vowels(string):
+    return string.replace("ä", "ae").replace("ö", "oe").replace("ü", "ue")
 
 
 def print_slots(slots, text="", color=None):
