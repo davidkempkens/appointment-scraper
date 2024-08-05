@@ -44,10 +44,11 @@ class Browser(webdriver.Chrome):
 
     def get_h3_containing_office_names(
         self,
-    ) -> list[webdriver.remote.webelement.WebElement]:
-        offices = WebDriverWait(self, 15).until(
+        search_term="Bürgerbüro",
+    ) -> list:
+        office_elements = WebDriverWait(self, 15).until(
             EC.presence_of_all_elements_located(
-                (By.XPATH, "//*[contains(@title, 'Bürgerbüro')]")
+                (By.XPATH, f"//*[contains(@title, '{search_term}')]")
             )
         )
         return offices
