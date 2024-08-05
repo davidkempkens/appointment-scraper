@@ -5,8 +5,8 @@
 Create a virtual environment and activate it.
 
 ```bash
-python -m venv buergerburo
-source buergerburo/Scripts/activate
+python -m venv scraping-env
+source scraping-env/Scripts/activate
 ```
 
 Install the required packages.
