@@ -7,17 +7,17 @@ VALUES
 INSERT INTO
     BuergerBuero (stadtteil, stadt)
 VALUES
-    ('Bilk', 'Duesseldorf'),
-    ('Oberkassel', 'Duesseldorf'),
-    ('Wersten/Holthausen', 'Duesseldorf'),
-    ('Rath', 'Duesseldorf'),
-    ('Gerresheim', 'Duesseldorf'),
     ('Benrath', 'Duesseldorf'),
+    ('Bilk', 'Duesseldorf'),
+    ('Dienstleistungszentrum', 'Duesseldorf'),
     ('Eller', 'Duesseldorf'),
     ('Garath', 'Duesseldorf'),
+    ('Gerresheim', 'Duesseldorf'),
     ('Kaiserswerth', 'Duesseldorf'),
+    ('Oberkassel', 'Duesseldorf'),
+    ('Rath', 'Duesseldorf'),
     ('Unterbach', 'Duesseldorf'),
-    ('Dienstleistungszentrum', 'Duesseldorf');
+    ('Wersten/Holthausen', 'Duesseldorf');
 
 INSERT INTO
     BuergerBuero (stadtteil, stadt)
