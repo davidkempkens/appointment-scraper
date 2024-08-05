@@ -15,6 +15,12 @@ Install the required packages.
 pip install -r requirements.txt
 ```
 
+Update pip
+
+```bash
+python.exe -m pip install --upgrade pip
+```
+
 Install ChromeDriver from [here](https://googlechromelabs.github.io/chrome-for-testing/)
 
 ## Run Main Script
