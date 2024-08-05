@@ -51,7 +51,12 @@ class Browser(webdriver.Chrome):
                 (By.XPATH, f"//*[contains(@title, '{search_term}')]")
             )
         )
-        return offices
+        return office_elements
+
+    def get_all_h3_elements(self) -> list:
+        return WebDriverWait(self, 15).until(
+            EC.presence_of_all_elements_located((By.TAG_NAME, "h3"))
+        )
 
     def open_offices_in_new_tabs(self, offices) -> dict[str, str]:
 
