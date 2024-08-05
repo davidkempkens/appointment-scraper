@@ -32,6 +32,6 @@ python run.py
 Run Tests
 
 ```bash
-python -m unittest -v test_db
-python -m unittest -v test_slots
+python -m unittest -v test.db
+python -m unittest -v test.slots
 ```
