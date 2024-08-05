@@ -7,7 +7,8 @@ DUESSELDORF_BASE_URL = "https://termine.duesseldorf.de"
 BERLIN_BASE_URL = "https://service.berlin.de/terminvereinbarung/termin/all/120703/"
 BREMEN_BASE_URL = "https://termin.bremen.de/termine/select2?md=5"
 
-CONCERNS_DUESSELDORF = {
+DUESSELDORF = {
+    "base_url": "https://termine.duesseldorf.de",
     "einwohnerangelegenheiten": {
         "id": "buttonfunktionseinheit-4",
         "name": "Einwohnerangelegenheiten",
@@ -80,9 +81,10 @@ CONCERNS_DUESSELDORF = {
                 },
             },
         },
-    }
+    },
 }
-CONCERNS_BREMEN = {
+BREMEN = {
+    "base_url": "https://termin.bremen.de/termine/select2?md=5",
     "einwohnerangelegenheiten": {
         "name": "Einwohnerangelegenheiten",
         "concerns": {
@@ -96,5 +98,5 @@ CONCERNS_BREMEN = {
                 },
             }
         },
-    }
+    },
 }

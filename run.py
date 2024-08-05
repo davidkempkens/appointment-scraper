@@ -10,10 +10,10 @@ def get_open_slots_from_duesseldorf(area, concern, sub_concern) -> list[Slot]:
     all_open_slots = []
 
     with Browser() as browser:
-        browser.land_first_page(url=const.DUESSELDORF_BASE_URL)
+        browser.land_first_page(url=const.DUESSELDORF["base_url"])
         browser.click_button_with_id("cookie_msg_btn_no")  # Decline Cookies
 
-        area = const.CONCERNS_DUESSELDORF[area]
+        area = const.DUESSELDORF[area]
         concern = area["concerns"][concern]
         sub_concern = concern["sub_concerns"][sub_concern]
 
@@ -52,10 +52,10 @@ def get_open_slots_from_bremen(concern, sub_concern) -> list[Slot]:
     all_open_slots = []
 
     with Browser() as browser:
-        browser.land_first_page(url=const.BREMEN_BASE_URL)
+        browser.land_first_page(url=const.BREMEN["base_url"])
         browser.click_button_with_id("cookie_msg_btn_no")  # Decline Cookies
 
-        area = const.CONCERNS_BREMEN["einwohnerangelegenheiten"]
+        area = const.BREMEN["einwohnerangelegenheiten"]
         concern = area["concerns"][concern]
         sub_concern = concern["sub_concerns"][sub_concern]
 
