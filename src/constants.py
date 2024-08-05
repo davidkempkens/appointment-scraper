@@ -100,3 +100,21 @@ BREMEN = {
         },
     },
 }
+
+DRESDEN = {
+    "base_url": "https://termine-buergerbuero.dresden.de/select2?md=2",
+    "buergerbueros": {
+        "name": "Bürgerbüros",
+        "concerns": {
+            "personaldokumente": {
+                "id": "header_concerns_accordion-172",
+                "sub_concerns": {
+                    "personalausweis_antrag": {
+                        "id": "button-plus-317",
+                        "name": "Personalausweis - Antrag",
+                    },
+                },
+            }
+        },
+    },
+}

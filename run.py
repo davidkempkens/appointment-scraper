@@ -1,5 +1,7 @@
 from src.browser import Browser
-import src.constants as const
+
+# import src.constants as const
+from src.constants import DUESSELDORF, DRESDEN, BREMEN
 import src.slots as slots
 from src.slots import Slot as Slot
 import src.database as db
@@ -33,10 +35,10 @@ def get_open_slots_from_duesseldorf(area, concern, sub_concern) -> list[Slot]:
     all_open_slots = []
 
     with Browser() as browser:
-        browser.land_first_page(url=const.DUESSELDORF["base_url"])
+        browser.land_first_page(url=DUESSELDORF["base_url"])
         browser.click_button_with_id("cookie_msg_btn_no")  # Decline Cookies
 
-        area = const.DUESSELDORF[area]
+        area = DUESSELDORF[area]
         concern = area["concerns"][concern]
         sub_concern = concern["sub_concerns"][sub_concern]
 
@@ -75,10 +77,10 @@ def get_open_slots_from_bremen(concern, sub_concern) -> list[Slot]:
     all_open_slots = []
 
     with Browser() as browser:
-        browser.land_first_page(url=const.BREMEN["base_url"])
+        browser.land_first_page(url=BREMEN["base_url"])
         browser.click_button_with_id("cookie_msg_btn_no")  # Decline Cookies
 
-        area = const.BREMEN["einwohnerangelegenheiten"]
+        area = BREMEN["einwohnerangelegenheiten"]
         concern = area["concerns"][concern]
         sub_concern = concern["sub_concerns"][sub_concern]
 
