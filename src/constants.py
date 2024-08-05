@@ -115,21 +115,21 @@ BREMEN = {
 }
 
 DRESDEN = {
-    "offices": [
-        "Altstadt",
-        "Blasewitz",
-        "Cossebaude",
-        "Cotta",
-        "Junioramt",
-        "Klotzsche",
-        "Langenbrueck",
-        "Leuben",
-        "Neustadt",
-        "Pieschen",
-        "Plauen",
-        "Prohlis",
-        "Weixdorf",
-    ],
+    "offices": {
+        "Bürgerbüro Altstadt (barrierefrei)": "Altstadt",
+        "Bürgerbüro Blasewitz (Teilweise barrierefrei)": "Blasewitz",
+        "Meldestelle Cossebaude (barrierefrei)": "Cossebaude",
+        "Bürgerbüro Cotta (Teilweise barrierefrei)": "Cotta",
+        "Junioramt": "Junioramt",
+        "Bürgerbüro Klotzsche (Teilweise barrierefrei)": "Klotzsche",
+        "Meldestelle Langebrück (barrierefrei)": "Langenbrueck",
+        "Bürgerbüro Leuben": "Leuben",
+        "Bürgerbüro Neustadt (barrierefrei)": "Neustadt",
+        "Bürgerbüro Pieschen": "Pieschen",
+        "Bürgerbüro Plauen (Teilweise barrierefrei)": "Plauen",
+        "Bürgerbüro Prohlis (barrierefrei)": "Prohlis",
+        "Meldestelle Weixdorf": "Weixdorf",
+    },
     "base_url": "https://termine-buergerbuero.dresden.de/select2?md=2",
     "buergerbueros": {
         "name": "Bürgerbüros",
