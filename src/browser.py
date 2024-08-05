@@ -5,9 +5,9 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 import os
-import browser.constants as const
-import browser.slots as slots
-from browser.slots import Slot as Slot
+import src.constants as const
+import src.slots as slots
+from src.slots import Slot as Slot
 from bs4 import BeautifulSoup
 from datetime import datetime
 

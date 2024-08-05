@@ -1,9 +1,32 @@
-from browser.browser import Browser
-import browser.constants as const
-import browser.slots as slots
-from browser.slots import Slot as Slot
-import browser.database as db
+from src.browser import Browser
+import src.constants as const
+import src.slots as slots
+from src.slots import Slot as Slot
+import src.database as db
 from datetime import datetime
+
+
+def main():
+
+    duesseldorf()
+    bremen()
+
+
+def bremen():
+    bremen = get_open_slots_from_bremen(
+        concern="ausweise", sub_concern="personalausweis_antrag"
+    )
+
+    save_slots_per_city(bremen, "Bremen")
+
+
+def duesseldorf():
+    duesseldorf = get_open_slots_from_duesseldorf(
+        area="einwohnerangelegenheiten",
+        concern="ausweise",
+        sub_concern="personalausweis_antrag",
+    )
+    save_slots_per_city(duesseldorf, "Duesseldorf")
 
 
 def get_open_slots_from_duesseldorf(area, concern, sub_concern) -> list[Slot]:
@@ -97,39 +120,5 @@ def save_slots_per_city(currently_open_slots, city, now=datetime.now()):
     )
 
 
-def bremen():
-    bremen = get_open_slots_from_bremen(
-        concern="ausweise", sub_concern="personalausweis_antrag"
-    )
-
-    save_slots_per_city(bremen, "Bremen")
-
-
-def duesseldorf():
-    duesseldorf = get_open_slots_from_duesseldorf(
-        area="einwohnerangelegenheiten",
-        concern="ausweise",
-        sub_concern="personalausweis_antrag",
-    )
-    save_slots_per_city(duesseldorf, "Duesseldorf")
-
-
-# def develop():
-
-
-def main():
-
-    duesseldorf()
-    bremen()
-
-
 if __name__ == "__main__":
-    # while True:
     main()
-
-    # # sleep for 30 s
-    # sys.stdout.flush()
-    # sys.stderr.flush()
-    # time.sleep(30)
-    # main()
-    # develop()

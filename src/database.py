@@ -1,7 +1,7 @@
 from datetime import datetime
 import sqlite3
-import browser.slots as slots
-from browser.slots import Slot as Slot
+import src.slots as slots
+from src.slots import Slot as Slot
 
 
 def init_db(db=None, leave_connection_open=False, reset=False, file="database.db"):

@@ -1,7 +1,7 @@
 from datetime import datetime
 import unittest
-import browser.slots as slots
-from browser.slots import Slot as Slot
+import src.slots as slots
+from src.slots import Slot as Slot
 
 
 class TestSlots(unittest.TestCase):
