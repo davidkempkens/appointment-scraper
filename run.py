@@ -11,6 +11,7 @@ from datetime import datetime
 def main():
 
     duesseldorf()
+    dresden()
     bremen()
 
 
@@ -29,6 +30,52 @@ def duesseldorf():
         sub_concern="personalausweis_antrag",
     )
     save_slots_per_city(duesseldorf, "Duesseldorf")
+
+
+def dresden():
+    dresden = get_open_slots_from_dresden(
+        concern="personaldokumente", sub_concern="personalausweis_antrag"
+    )
+
+    save_slots_per_city(dresden, "Dresden")
+
+
+def get_open_slots_from_dresden(concern, sub_concern) -> list[Slot]:
+    all_open_slots = []
+
+    try:
+        with Browser() as browser:
+            browser.land_first_page(url=DRESDEN["base_url"])
+            browser.click_button_with_id("cookie_msg_btn_no")  # Decline Cookies
+
+            area = DRESDEN["buergerbueros"]
+            concern = area["concerns"][concern]
+            sub_concern = concern["sub_concerns"][sub_concern]
+
+            browser.click_button_with_id(concern["id"])  # Ausweise
+            browser.click_button_with_id(sub_concern["id"])  # Personalausweis - Antrag
+
+            browser.click_button_with_id("WeiterButton")  # Weiter
+            browser.click_button_with_id("OKButton")  # OK
+
+            # get all offices
+            office_elements = browser.get_all_h3_elements()
+            office_window_handles = browser.open_offices_in_new_tabs(
+                office_elements, city=DRESDEN
+            )
+
+            all_open_slots = browser.get_open_slots_from_tabs_for_all_offices(
+                office_window_handles
+            )
+    finally:
+        browser.quit()
+
+        for slot in all_open_slots:
+            slot.concern = (
+                sub_concern["name"] if sub_concern["name"] else sub_concern["id"]
+            )
+
+    return all_open_slots
 
 
 def get_open_slots_from_duesseldorf(area, concern, sub_concern) -> list[Slot]:

@@ -58,7 +58,7 @@ class Browser(webdriver.Chrome):
             EC.presence_of_all_elements_located((By.TAG_NAME, "h3"))
         )
 
-    def open_offices_in_new_tabs(self, offices) -> dict[str, str]:
+    def open_offices_in_new_tabs(self, offices, city=None) -> dict[str, str]:
 
         self.original_window = self.current_window_handle
         # print(f"Original Window: {self.original_window}")
@@ -74,12 +74,12 @@ class Browser(webdriver.Chrome):
                     self.click_element(office)
 
                 # get the office name
-                office_name = office.get_attribute("title").split(",")[0]
+                full_office_name = office.get_attribute("title").split(",")[0]
 
                 # click on the Button in the expanded accoridion item
                 # with "Bürgerbüro Kaiserswerth auswählen"
                 input_element = self.get_element_with_attribute(
-                    "value", office_name + " auswählen"
+                    "value", full_office_name + " auswählen"
                 )
 
                 # open the Terminübersicht in a new tab
@@ -89,9 +89,11 @@ class Browser(webdriver.Chrome):
                 for window in self.window_handles:
                     if window != self.original_window:
                         if window not in office_window_handles.values():
-                            stadtteil = office_name.split(" ")[1]
+                            if city is not None:
+                                stadtteil = city["offices"][full_office_name]
+                            else:
+                                stadtteil = full_office_name.split(" ")[-1]
                             office_window_handles[stadtteil] = window
-
         return office_window_handles
 
     def open_element_in_new_tab(self, element):
