@@ -81,28 +81,30 @@ def get_open_slots_from_dresden(concern, sub_concern) -> list[Slot]:
 def get_open_slots_from_duesseldorf(area, concern, sub_concern) -> list[Slot]:
     all_open_slots = []
 
-    with Browser() as browser:
-        browser.land_first_page(url=DUESSELDORF["base_url"])
-        browser.click_button_with_id("cookie_msg_btn_no")  # Decline Cookies
+    try:
+        with Browser() as browser:
+            browser.land_first_page(url=DUESSELDORF["base_url"])
+            browser.click_button_with_id("cookie_msg_btn_no")  # Decline Cookies
 
-        area = DUESSELDORF[area]
-        concern = area["concerns"][concern]
-        sub_concern = concern["sub_concerns"][sub_concern]
+            area = DUESSELDORF[area]
+            concern = area["concerns"][concern]
+            sub_concern = concern["sub_concerns"][sub_concern]
 
-        browser.click_button_with_id(area["id"])
-        browser.click_button_with_id(concern["id"])
-        browser.click_button_with_id(sub_concern["id"])
+            browser.click_button_with_id(area["id"])
+            browser.click_button_with_id(concern["id"])
+            browser.click_button_with_id(sub_concern["id"])
 
-        browser.click_button_with_id("WeiterButton")  # Weiter
-        browser.click_button_with_id("OKButton")  # OK
+            browser.click_button_with_id("WeiterButton")  # Weiter
+            browser.click_button_with_id("OKButton")  # OK
 
-        # get all offices
-        offices = browser.get_h3_containing_office_names()
-        office_window_handles = browser.open_offices_in_new_tabs(offices)
+            # get all offices
+            offices = browser.get_h3_containing_office_names()
+            office_window_handles = browser.open_offices_in_new_tabs(offices)
 
-        all_open_slots = browser.get_open_slots_from_tabs_for_all_offices(
-            office_window_handles
-        )
+            all_open_slots = browser.get_open_slots_from_tabs_for_all_offices(
+                office_window_handles
+            )
+    finally:
         browser.quit()
 
         for slot in all_open_slots:
@@ -113,39 +115,30 @@ def get_open_slots_from_duesseldorf(area, concern, sub_concern) -> list[Slot]:
     return all_open_slots
 
 
-def get_open_slots_from_berlin(concern, sub_concern) -> list[Slot]:
-    all_open_slots = []
-
-    with Browser() as browser:
-        browser.land_first_page(url=const.BERLIN_BASE_URL)
-
-
 def get_open_slots_from_bremen(concern, sub_concern) -> list[Slot]:
     all_open_slots = []
 
-    with Browser() as browser:
-        browser.land_first_page(url=BREMEN["base_url"])
-        browser.click_button_with_id("cookie_msg_btn_no")  # Decline Cookies
+    try:
+        with Browser() as browser:
+            browser.land_first_page(url=BREMEN["base_url"])
+            browser.click_button_with_id("cookie_msg_btn_no")  # Decline Cookies
 
-        area = BREMEN["einwohnerangelegenheiten"]
-        concern = area["concerns"][concern]
-        sub_concern = concern["sub_concerns"][sub_concern]
+            area = BREMEN["einwohnerangelegenheiten"]
+            concern = area["concerns"][concern]
+            sub_concern = concern["sub_concerns"][sub_concern]
 
-        browser.click_button_with_id(concern["id"])  # Ausweise
-        # browser.click_button_with_id("header_concerns_accordion-7738")  # Ausweise
-        browser.click_button_with_id(sub_concern["id"])  # Personalausweis - Antrag
-        # browser.click_button_with_id("button-plus-9077")  # Personalausweis - Antrag
+            browser.click_button_with_id(concern["id"])  # Ausweise
+            browser.click_button_with_id(sub_concern["id"])  # Personalausweis - Antrag
+            browser.click_button_with_id("WeiterButton")  # Weiter
+            # browser.click_button_with_id("OKButton")  # OK
+            browser.click_element(
+                element=browser.get_element_with_attribute("name", "select_location")
+            )  # Standort auswählen
 
-        browser.click_button_with_id("WeiterButton")  # Weiter
-        # browser.click_button_with_id("OKButton")  # OK
-        browser.click_element(
-            element=browser.get_element_with_attribute("name", "select_location")
-        )  # Standort auswählen
-
-        all_open_slots = browser.get_open_slots_for_one_office(
-            office="BuergerServiceCenter-Mitte"
-        )
-
+            all_open_slots = browser.get_open_slots_for_one_office(
+                office="BuergerServiceCenter-Mitte"
+            )
+    finally:
         browser.quit()
 
         for slot in all_open_slots:
