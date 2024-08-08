@@ -157,12 +157,12 @@ def get_open_slots_from_bremen(concern, sub_concern) -> list[Slot]:
 
 
 def save_slots_per_city(currently_open_slots, city, now=datetime.now()):
-    print(f"Saving slots for {city} at {now}")
+    # print(f"Saving slots for {city} at {now}")
     open, updated, new = db.update_slots(currently_open_slots, timestamp=now, city=city)
 
-    slots.print_slots(open, "Open slots:")
-    slots.print_slots(updated, "Updated slots:", "fail")
-    slots.print_slots(new, "New slots:", "green")
+    # slots.print_slots(open, "Open slots:")
+    # slots.print_slots(updated, "Updated slots:", "fail")
+    # slots.print_slots(new, "New slots:", "green")
 
     print(
         f"Open: {len(open)} Updated: {len(updated)} New: {len(new)} in {city} at {now}"
