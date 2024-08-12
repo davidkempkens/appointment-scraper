@@ -2,6 +2,13 @@
 
 ## Setup
 
+Create a conda environment and activate it.
+
+```bash
+conda env create -f environment.yml
+conda activate scraping
+```
+
 Create a virtual environment and activate it.
 
 ```bash
