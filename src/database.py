@@ -39,6 +39,25 @@ def reset_db(db=None, file="database.db", leave_connection_open=False):
         db.close()
 
 
+def save_slots_per_city(
+    slots: list[Slot],
+    city: str,
+    now=datetime.now(),
+    db=None,
+    leave_connection_open=False,
+):
+    # print(f"Saving slots for {city} at {now}")
+    open, updated, new = update_slots(slots, timestamp=now, city=city)
+
+    # slots.print_slots(open, "Open slots:")
+    # slots.print_slots(updated, "Updated slots:", "fail")
+    # slots.print_slots(new, "New slots:", "green")
+
+    print(
+        f"Open: {len(open)} Updated: {len(updated)} New: {len(new)} in {city} at {now}"
+    )
+
+
 def update_slots(
     open: list[Slot],
     city: str,

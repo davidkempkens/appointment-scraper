@@ -20,7 +20,7 @@ def bremen():
         concern="ausweise", sub_concern="personalausweis_antrag"
     )
 
-    save_slots_per_city(bremen, "Bremen")
+    db.save_slots_per_city(bremen, "Bremen")
 
 
 def duesseldorf():
@@ -29,7 +29,7 @@ def duesseldorf():
         concern="ausweise",
         sub_concern="personalausweis_antrag",
     )
-    save_slots_per_city(duesseldorf, "Duesseldorf")
+    db.save_slots_per_city(duesseldorf, "Duesseldorf")
 
 
 def dresden():
@@ -37,7 +37,7 @@ def dresden():
         concern="personaldokumente", sub_concern="personalausweis_antrag"
     )
 
-    save_slots_per_city(dresden, "Dresden")
+    db.save_slots_per_city(dresden, "Dresden")
 
 
 def get_open_slots_from_dresden(concern, sub_concern) -> list[Slot]:
@@ -147,19 +147,6 @@ def get_open_slots_from_bremen(concern, sub_concern) -> list[Slot]:
             )
 
         return all_open_slots
-
-
-def save_slots_per_city(currently_open_slots, city, now=datetime.now()):
-    # print(f"Saving slots for {city} at {now}")
-    open, updated, new = db.update_slots(currently_open_slots, timestamp=now, city=city)
-
-    # slots.print_slots(open, "Open slots:")
-    # slots.print_slots(updated, "Updated slots:", "fail")
-    # slots.print_slots(new, "New slots:", "green")
-
-    print(
-        f"Open: {len(open)} Updated: {len(updated)} New: {len(new)} in {city} at {now}"
-    )
 
 
 if __name__ == "__main__":
