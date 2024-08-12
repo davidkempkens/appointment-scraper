@@ -5,7 +5,8 @@ CREATE TABLE
     IF NOT EXISTS BuergerBuero (
         stadtteil VARCHAR(255) PRIMARY KEY NOT NULL,
         stadt VARCHAR(255) NOT NULL,
-        FOREIGN KEY (stadt) REFERENCES Stadt (name)
+        FOREIGN KEY (stadt) REFERENCES Stadt (name),
+        UNIQUE (stadtteil, stadt)
     );
 
 CREATE TABLE

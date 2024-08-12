@@ -28,8 +28,8 @@ VALUES
 INSERT INTO
     BuergerBuero (stadtteil, stadt)
 VALUES
-    ('Altstadt', 'Dreseden'),
-    ('Blasewitz', 'Dreseden'),
+    ('Altstadt', 'Dresden'),
+    ('Blasewitz', 'Dresden'),
     ('Cossebaude', 'Dresden'),
     ('Cotta', 'Dresden'),
     ('Junioramt', 'Dresden'),
