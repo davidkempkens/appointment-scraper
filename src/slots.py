@@ -66,6 +66,15 @@ def difference(A: list[Slot], B: list[Slot]) -> list[Slot]:
     return [a for a in A if a not in B]
 
 
+def add_concern_to_slots(slots: list[Slot], concern: str) -> list[Slot]:
+    """
+    adds a concern to all slots
+    """
+    for slot in slots:
+        slot.concern = concern
+    return slots
+
+
 def convert_german_vowels(string):
     return string.replace("ä", "ae").replace("ö", "oe").replace("ü", "ue")
 

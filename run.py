@@ -70,12 +70,7 @@ def get_open_slots_from_dresden(concern, sub_concern) -> list[Slot]:
     finally:
         browser.quit()
 
-        for slot in all_open_slots:
-            slot.concern = (
-                sub_concern["name"] if sub_concern["name"] else sub_concern["id"]
-            )
-
-    return all_open_slots
+    return slots.add_concern_to_slots(all_open_slots, sub_concern["name"])
 
 
 def get_open_slots_from_duesseldorf(area, concern, sub_concern) -> list[Slot]:
@@ -107,12 +102,7 @@ def get_open_slots_from_duesseldorf(area, concern, sub_concern) -> list[Slot]:
     finally:
         browser.quit()
 
-        for slot in all_open_slots:
-            slot.concern = (
-                sub_concern["name"] if sub_concern["name"] else sub_concern["id"]
-            )
-
-    return all_open_slots
+    return slots.add_concern_to_slots(all_open_slots, sub_concern["name"])
 
 
 def get_open_slots_from_bremen(concern, sub_concern) -> list[Slot]:
@@ -141,12 +131,7 @@ def get_open_slots_from_bremen(concern, sub_concern) -> list[Slot]:
     finally:
         browser.quit()
 
-        for slot in all_open_slots:
-            slot.concern = (
-                sub_concern["name"] if sub_concern["name"] else sub_concern["id"]
-            )
-
-        return all_open_slots
+    return slots.add_concern_to_slots(all_open_slots, sub_concern["name"])
 
 
 if __name__ == "__main__":
