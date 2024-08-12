@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source scraping-env/Scripts/activate
+# source scraping-env/Scripts/activate
 
 # run duesseldorf.py every minute
 while true; do
