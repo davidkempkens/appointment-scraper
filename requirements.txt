@@ -5,6 +5,7 @@ uvicorn
 selenium
 requests
 beautifulsoup4
+dash
 pandas
 numpy
 scipy

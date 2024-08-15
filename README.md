@@ -36,6 +36,12 @@ Install ChromeDriver from [here](https://googlechromelabs.github.io/chrome-for-t
 python run.py
 ```
 
+## Run Dashboard
+
+```bash
+python app.py
+```
+
 Run Tests
 
 ```bash
