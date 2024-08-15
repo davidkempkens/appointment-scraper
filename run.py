@@ -1,3 +1,4 @@
+import sys
 from src.browser import Browser
 
 # import src.constants as const
@@ -10,9 +11,20 @@ from datetime import datetime
 
 def main():
 
-    duesseldorf()
-    dresden()
-    bremen()
+    if len(sys.argv) > 1:
+        city = sys.argv[1].lower()
+        if city == "duesseldorf":
+            duesseldorf()
+        elif city == "dresden":
+            dresden()
+        elif city == "bremen":
+            bremen()
+        else:
+            print("City not found")
+    else:
+        duesseldorf()
+        dresden()
+        bremen()
 
 
 def bremen():
