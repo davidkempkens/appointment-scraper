@@ -12,8 +12,8 @@ conda activate scraping
 Create a virtual environment and activate it.
 
 ```bash
-python -m venv scraping-env
-source scraping-env/Scripts/activate
+python -m venv venv
+source venv/Scripts/activate
 ```
 
 Install the required packages.

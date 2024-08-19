@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# if conda environment is not activated, activate it
-# conda activate scraping
+source venv/Scripts/activate
 
 while true; do
     python run.py Duesseldorf &
