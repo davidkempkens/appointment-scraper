@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.select import Select
 import os
 import src.constants as const
 import src.slots as slots
@@ -104,6 +105,16 @@ class Browser(webdriver.Chrome):
     def click_element(self, element, time=15):
         WebDriverWait(self, time).until(EC.element_to_be_clickable(element)).click()
 
+    def enter_text(self, element, text, time=15):
+        WebDriverWait(self, time).until(EC.element_to_be_clickable(element)).send_keys(
+            text
+        )
+
+    def select_option_by_value(self, element, value, time=15):
+        select = WebDriverWait(self, time).until(EC.element_to_be_clickable(element))
+        select = Select(select)
+        select.select_by_value(value)
+
     def get_element_with_attribute(self, attribute, value):
         return WebDriverWait(self, 15).until(
             EC.element_to_be_clickable((By.XPATH, f"//*[@{attribute}='{value}']"))
@@ -184,3 +195,34 @@ class Browser(webdriver.Chrome):
             return True
         except:
             return False
+
+    def get_open_slots_from_element(self, element) -> list[Slot]:
+
+        open_slots = []
+
+        for div in element:
+            soup = BeautifulSoup(div.get_attribute("outerHTML"), "html.parser")
+
+            buttons = soup.find_all("button", class_="card")
+
+            for button in buttons:
+
+                # get the name of the office from the h4 tag
+                office = button.find_previous("h4").text.split(" ")[-1]
+
+                # get the date and time of the slot
+                date_time = (
+                    button.get("onclick")
+                    .split("'")[1]
+                    .replace("%3a", ":")
+                    .replace("%2b", "+")
+                )
+                # 2024-11-11T13:20:00+01:00
+
+                # build datetime object from the day and the time
+                date_time = datetime.strptime(date_time, "%Y-%m-%dT%H:%M:%S%z")
+
+                slot = Slot(office, date_time)
+                open_slots.append(slot)
+
+        return open_slots

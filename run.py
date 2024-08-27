@@ -2,7 +2,7 @@ import sys
 from src.browser import Browser
 
 # import src.constants as const
-from src.constants import DUESSELDORF, DRESDEN, BREMEN
+from src.constants import DUESSELDORF, DRESDEN, BREMEN, HANNOVER
 import src.slots as slots
 from src.slots import Slot as Slot
 import src.database as db
@@ -19,12 +19,15 @@ def main():
             dresden()
         elif city == "bremen":
             bremen()
+        elif city == "hannover":
+            hannover()
         else:
             print("City not found")
     else:
         duesseldorf()
         dresden()
         bremen()
+        hannover()
 
 
 def bremen():
@@ -50,6 +53,41 @@ def dresden():
     )
 
     db.save_slots_per_city(dresden, "Dresden")
+
+
+def hannover():
+    hannover = get_open_slots_from_hannover(concern="personalausweis_antrag")
+
+    slots.print_slots(hannover, "Hannover")
+
+    db.save_slots_per_city(hannover, "Hannover")
+
+
+def get_open_slots_from_hannover(concern) -> list[Slot]:
+    all_open_slots = []
+
+    with Browser() as browser:
+        browser.land_first_page(url=HANNOVER["base_url"])
+
+        # enter postal code because it is prompted
+        browser.get_element_with_id("input-field").send_keys(HANNOVER["plz"])
+
+        # select Personalausweis
+        select_element = browser.get_element_with_id(
+            HANNOVER["concerns"][concern]["id"]
+        )
+        browser.select_option_by_value(select_element, "1")
+        browser.get_element_with_attribute("data-testid", "button_next").click()
+
+        browser.click_button_with_id("locations_selected_all_top")
+        browser.click_button_with_id("next-button")
+
+        slots_element = browser.get_elements_with_class("timeslot_cards")
+        all_open_slots = browser.get_open_slots_from_element(slots_element)
+
+        browser.quit()
+
+    return slots.add_concern_to_slots(all_open_slots, "Personalausweis - Antrag")
 
 
 def get_open_slots_from_dresden(concern, sub_concern) -> list[Slot]:

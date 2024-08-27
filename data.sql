@@ -3,7 +3,8 @@ INSERT INTO
 VALUES
     ('Duesseldorf'),
     ('Bremen'),
-    ('Dresden');
+    ('Dresden'),
+    ('Hannover');
 
 INSERT INTO
     BuergerBuero (stadtteil, stadt)
@@ -19,6 +20,19 @@ VALUES
     ('Rath', 'Duesseldorf'),
     ('Unterbach', 'Duesseldorf'),
     ('Wersten/Holthausen', 'Duesseldorf');
+
+INSERT INTO
+    BuergerBuero (stadtteil, stadt)
+VALUES
+    ('Aegi', 'Hannover'),
+    ('Bemerode', 'Hannover'),
+    ('Doehren', 'Hannover'),
+    ('Herrenhausen', 'Hannover'),
+    ('Linden', 'Hannover'),
+    ('Podbi-Park', 'Hannover'),
+    ('Ricklingen', 'Hannover'),
+    ('Sahlkamp', 'Hannover'),
+    ('Schuetzenplatz', 'Hannover');
 
 INSERT INTO
     BuergerBuero (stadtteil, stadt)

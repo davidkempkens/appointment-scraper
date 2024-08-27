@@ -114,6 +114,28 @@ BREMEN = {
     },
 }
 
+HANNOVER = {
+    "base_url": "http://termin.hannover-stadt.de/buergeramt",
+    "plz": "30159",
+    "offices": {
+        "Aegi": "Aegi",
+        "Bemerode": "Bemerode",
+        "Doehren": "Doehren",
+        "Herrenhausen": "Herrenhausen",
+        "Linden": "Linden",
+        "Podbi-Park": "Podbi-Park",
+        "Ricklingen": "Ricklingen",
+        "Sahlkamp": "Sahlkamp",
+        "Schuetzenplatz": "Schuetzenplatz",
+    },
+    "concerns": {
+        "personalausweis_antrag": {
+            "id": "service_ede3dafc-4941-4e08-9526-bd70d77160ce",
+            "name": "Personalausweis - Antrag",
+        },
+    },
+}
+
 DRESDEN = {
     "offices": {
         "Bürgerbüro Altstadt (barrierefrei)": "Altstadt",

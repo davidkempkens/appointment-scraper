@@ -1,6 +1,6 @@
 from src.browser import Browser
 import src.constants as const
-from src.constants import DUESSELDORF, DRESDEN, BREMEN
+from src.constants import DUESSELDORF, DRESDEN, BREMEN, HANNOVER
 import src.slots as slots
 from src.slots import Slot as Slot
 import src.database as db
@@ -11,19 +11,45 @@ def main():
 
     # duesseldorf()
     # bremen()
-    dresden()
+    # dresden()
+    hannover()
 
 
-def dresden():
-    dresden = get_open_slots_from_dresden(
-        concern="personaldokumente", sub_concern="personalausweis_antrag"
-    )
+def hannover():
+    hannover = get_open_slots_from_hannover()
 
-    slots.print_slots(dresden, "Dresden:")
+    slots.print_slots(hannover, "Hannover:")
 
-    print(f"Found {len(dresden)} slots in Dresden")
+    print(f"Found {len(hannover)} slots in Hannover")
 
-    # save_slots_per_city(dresden, "Dresden")
+    # save_slots_per_city(hannover, "Hannover")
+
+
+def get_open_slots_from_hannover() -> list[Slot]:
+    all_open_slots = []
+
+    with Browser() as browser:
+        browser.land_first_page(url=HANNOVER["base_url"])
+
+        # enter postal code because it is prompted
+        browser.get_element_with_id("input-field").send_keys(HANNOVER["plz"])
+
+        # select Personalausweis
+        select_element = browser.get_element_with_id(
+            "service_ede3dafc-4941-4e08-9526-bd70d77160ce"
+        )
+        browser.select_option_by_value(select_element, "1")
+        browser.get_element_with_attribute("data-testid", "button_next").click()
+
+        browser.click_button_with_id("locations_selected_all_top")
+        browser.click_button_with_id("next-button")
+
+        slots_element = browser.get_elements_with_class("timeslot_cards")
+        all_open_slots = browser.get_open_slots_from_element(slots_element)
+
+        browser.quit()
+
+    return slots.add_concern_to_slots(all_open_slots, "Personalausweis - Antrag")
 
 
 def get_open_slots_from_dresden(concern, sub_concern) -> list[Slot]:
@@ -61,19 +87,6 @@ def get_open_slots_from_dresden(concern, sub_concern) -> list[Slot]:
             )
 
     return all_open_slots
-
-
-def save_slots_per_city(currently_open_slots, city, now=datetime.now()):
-    print(f"Saving slots for {city} at {now}")
-    open, updated, new = db.update_slots(currently_open_slots, timestamp=now, city=city)
-
-    slots.print_slots(open, "Open slots:")
-    slots.print_slots(updated, "Updated slots:", "fail")
-    slots.print_slots(new, "New slots:", "green")
-
-    print(
-        f"Open: {len(open)} Updated: {len(updated)} New: {len(new)} in {city} at {now}"
-    )
 
 
 if __name__ == "__main__":
