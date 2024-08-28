@@ -5,7 +5,7 @@ import sqlite3
 
 
 def fetch_slots_from_db():
-    db_file = "database.db"
+    db_file = "backup/database_2024-08-28_14-36-07.db"
     conn = sqlite3.connect(db_file)
 
     sql = """
@@ -35,15 +35,53 @@ def get_open_slots(city):
     return slots
 
 
+@callback(
+    Output(component_id="controls-and-line-graph", component_property="figure"),
+    Input(component_id="controls-and-radio-item", component_property="value"),
+)
+def count_open_slots_over_time(city):
+    df = fetch_slots_from_db()
+
+    # alle Termine in Düsseldorf
+    df_city = df[df["stadt"] == city]
+
+    # sortiere aufsteigend nach belegt-Zeitpunkt
+    timestamps = df_city["erstmalsErfasstAlsBelegt"].sort_values().unique()
+
+    count_open_per_timestamp = []
+
+    for timestamp in timestamps:
+
+        # pro Zeitpunkt: wie viele Termine sind offen?
+        # Termine sind zu einem Zeitpunkt offen, wenn ...
+        count = df_city[
+            # der Anlegezeitpunkt vor (oder auf) dem Zeitpunkt liegt
+            (df_city["erstmalsErfasstAlsFrei"] <= timestamp)
+            # und ...
+            & (
+                # der Belegtzeitpunkt entweder nach dem Zeitpunkt liegt
+                (timestamp < df_city["erstmalsErfasstAlsBelegt"])
+                # oder gar nicht gesetzt ist
+                | (df_city["erstmalsErfasstAlsBelegt"].isnull())
+            )
+        ].shape[0]
+        count_open_per_timestamp.append(count)
+
+    open = pd.DataFrame({"Zeit": timestamps, "Termine": count_open_per_timestamp})
+
+    return px.line(open, x="Zeit", y="Termine")
+
+
 app = Dash()
 
 app.layout = [
     html.Div(children="My Dash App"),
     dcc.RadioItems(
-        options=["Duesseldorf", "Dresden", "Bremen"],
+        options=["Duesseldorf", "Dresden", "Bremen", "Hannover"],
         value="Duesseldorf",
         id="controls-and-radio-item",
     ),
+    dcc.Graph(figure={}, id="controls-and-line-graph"),
     dcc.Graph(figure={}, id="controls-and-graph"),
     dash_table.DataTable(
         id="table",

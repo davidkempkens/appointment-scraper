@@ -58,7 +58,7 @@ def dresden():
 def hannover():
     hannover = get_open_slots_from_hannover(concern="personalausweis_antrag")
 
-    slots.print_slots(hannover, "Hannover")
+    # slots.print_slots(hannover, "Hannover")
 
     db.save_slots_per_city(hannover, "Hannover")
 
