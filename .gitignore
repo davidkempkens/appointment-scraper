@@ -3,6 +3,7 @@ backup/
 chromedriver.exe
 sqlite3.exe
 database.db
+database.db-journal
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
