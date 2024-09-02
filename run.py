@@ -4,6 +4,7 @@ from cities.dresden import dresden
 from cities.duesseldorf import duesseldorf
 from cities.hannover import hannover
 from cities.wiesbaden import wiesbaden
+from datetime import datetime
 
 
 def main():
@@ -25,7 +26,7 @@ def main():
                 print("City not found")
 
     except Exception as e:
-        print(e)
+        print(f"An error occured: {e} at: {datetime.now()}")
 
 
 if __name__ == "__main__":
