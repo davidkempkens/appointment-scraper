@@ -6,8 +6,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
 import os
-import src.constants as const
-import src.slots as slots
 from src.slots import Slot as Slot
 from bs4 import BeautifulSoup
 from datetime import datetime
@@ -34,7 +32,7 @@ class Browser(webdriver.Chrome):
         if self.teardown:
             self.quit()
 
-    def land_first_page(self, url=const.DUESSELDORF_BASE_URL):
+    def land_first_page(self, url):
         self.get(url)
 
     def click_button_with_id(self, id, time=15):

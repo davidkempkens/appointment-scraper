@@ -30,10 +30,16 @@ python.exe -m pip install --upgrade pip
 
 Install ChromeDriver from [here](https://googlechromelabs.github.io/chrome-for-testing/)
 
-## Run Main Script
+## Run Main Script for each city
 
 ```bash
-python run.py
+python run.py Duesseldorf
+```
+
+## Run Main Script every minute for each city
+
+```bash
+./script.sh Duesseldorf
 ```
 
 ## Run Dashboard

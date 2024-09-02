@@ -1,11 +1,7 @@
-import os
-
-CHROMEDRIVER_PATH = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "chromedriver.exe"
-)
-DUESSELDORF_BASE_URL = "https://termine.duesseldorf.de"
-BERLIN_BASE_URL = "https://service.berlin.de/terminvereinbarung/termin/all/120703/"
-BREMEN_BASE_URL = "https://termin.bremen.de/termine/select2?md=5"
+from src.browser import Browser
+import src.slots as slots
+from src.slots import Slot as Slot
+import src.database as db
 
 DUESSELDORF = {
     "offices": [
@@ -96,91 +92,44 @@ DUESSELDORF = {
         },
     },
 }
-BREMEN = {
-    "base_url": "https://termin.bremen.de/termine/select2?md=5",
-    "einwohnerangelegenheiten": {
-        "name": "Einwohnerangelegenheiten",
-        "concerns": {
-            "ausweise": {
-                "id": "header_concerns_accordion-7738",
-                "sub_concerns": {
-                    "personalausweis_antrag": {
-                        "id": "button-plus-9077",
-                        "name": "Personalausweis - Antrag",
-                    },
-                },
-            }
-        },
-    },
-}
 
-HANNOVER = {
-    "base_url": "http://termin.hannover-stadt.de/buergeramt",
-    "plz": "30159",
-    "offices": {
-        "Aegi": "Aegi",
-        "Bemerode": "Bemerode",
-        "Doehren": "Doehren",
-        "Herrenhausen": "Herrenhausen",
-        "Linden": "Linden",
-        "Podbi-Park": "Podbi-Park",
-        "Ricklingen": "Ricklingen",
-        "Sahlkamp": "Sahlkamp",
-        "Schuetzenplatz": "Schuetzenplatz",
-    },
-    "concerns": {
-        "personalausweis_antrag": {
-            "id": "service_ede3dafc-4941-4e08-9526-bd70d77160ce",
-            "name": "Personalausweis - Antrag",
-        },
-    },
-}
 
-DRESDEN = {
-    "offices": {
-        "Bürgerbüro Altstadt (barrierefrei)": "Altstadt",
-        "Bürgerbüro Blasewitz (Teilweise barrierefrei)": "Blasewitz",
-        "Meldestelle Cossebaude (barrierefrei)": "Cossebaude",
-        "Bürgerbüro Cotta (Teilweise barrierefrei)": "Cotta",
-        "Junioramt": "Junioramt",
-        "Bürgerbüro Klotzsche (Teilweise barrierefrei)": "Klotzsche",
-        "Meldestelle Langebrück (barrierefrei)": "Langenbrueck",
-        "Bürgerbüro Leuben": "Leuben",
-        "Bürgerbüro Neustadt (barrierefrei)": "Neustadt",
-        "Bürgerbüro Pieschen": "Pieschen",
-        "Bürgerbüro Plauen (Teilweise barrierefrei)": "Plauen",
-        "Bürgerbüro Prohlis (barrierefrei)": "Prohlis",
-        "Meldestelle Weixdorf": "Weixdorf",
-    },
-    "base_url": "https://termine-buergerbuero.dresden.de/select2?md=2",
-    "buergerbueros": {
-        "name": "Bürgerbüros",
-        "concerns": {
-            "personaldokumente": {
-                "id": "header_concerns_accordion-172",
-                "sub_concerns": {
-                    "personalausweis_antrag": {
-                        "id": "button-plus-317",
-                        "name": "Personalausweis - Antrag",
-                    },
-                },
-            }
-        },
-    },
-}
+def duesseldorf():
+    duesseldorf = get_open_slots_from_duesseldorf(
+        area="einwohnerangelegenheiten",
+        concern="ausweise",
+        sub_concern="personalausweis_antrag",
+    )
+    db.save_slots_per_city(duesseldorf, "Duesseldorf")
 
-WIESBADEN = {
-    "base_url": "https://dtms.wiesbaden.de/DTMSTerminWeb",
-    "form_data": {
-        "nachname": "Mustermann",
-        "vorname": "Max",
-        "email": "max.mustermann@mail.de",
-        "telefon": "01234567890",
-    },
-    "concerns": {
-        "personalausweis_antrag": {
-            "id": "service_ede3dafc-4941-4e08-9526-bd70d77160ce",
-            "name": "Personalausweis - Antrag",
-        },
-    },
-}
+
+def get_open_slots_from_duesseldorf(area, concern, sub_concern) -> list[Slot]:
+    all_open_slots = []
+
+    try:
+        with Browser() as browser:
+            browser.land_first_page(url=DUESSELDORF["base_url"])
+            browser.click_button_with_id("cookie_msg_btn_no")  # Decline Cookies
+
+            area = DUESSELDORF[area]
+            concern = area["concerns"][concern]
+            sub_concern = concern["sub_concerns"][sub_concern]
+
+            browser.click_button_with_id(area["id"])
+            browser.click_button_with_id(concern["id"])
+            browser.click_button_with_id(sub_concern["id"])
+
+            browser.click_button_with_id("WeiterButton")  # Weiter
+            browser.click_button_with_id("OKButton")  # OK
+
+            # get all offices
+            offices = browser.get_h3_containing_office_names()
+            office_window_handles = browser.open_offices_in_new_tabs(offices)
+
+            all_open_slots = browser.get_open_slots_from_tabs_for_all_offices(
+                office_window_handles
+            )
+    finally:
+        browser.quit()
+
+    return slots.add_concern_to_slots(all_open_slots, sub_concern["name"])
