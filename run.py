@@ -28,6 +28,10 @@ def main():
     except Exception as e:
         print(f"An error occured: {e} at: {datetime.now()}")
 
+        # try again
+        print("Trying again...")
+        main()
+
 
 if __name__ == "__main__":
     main()
