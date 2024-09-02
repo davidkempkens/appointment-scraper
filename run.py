@@ -2,7 +2,7 @@ import sys
 from src.browser import Browser
 
 # import src.constants as const
-from src.constants import DUESSELDORF, DRESDEN, BREMEN, HANNOVER
+from src.constants import DUESSELDORF, DRESDEN, BREMEN, HANNOVER, WIESBADEN
 import src.slots as slots
 from src.slots import Slot as Slot
 import src.database as db
@@ -11,23 +11,30 @@ from datetime import datetime
 
 def main():
 
-    if len(sys.argv) > 1:
-        city = sys.argv[1].lower()
-        if city == "duesseldorf":
-            duesseldorf()
-        elif city == "dresden":
-            dresden()
-        elif city == "bremen":
-            bremen()
-        elif city == "hannover":
-            hannover()
+    try:
+        if len(sys.argv) > 1:
+            city = sys.argv[1].lower()
+            if city == "duesseldorf":
+                duesseldorf()
+            elif city == "dresden":
+                dresden()
+            elif city == "bremen":
+                bremen()
+            elif city == "hannover":
+                hannover()
+            elif city == "wiesbaden":
+                wiesbaden()
+            else:
+                print("City not found")
         else:
-            print("City not found")
-    else:
-        duesseldorf()
-        dresden()
-        bremen()
-        hannover()
+            duesseldorf()
+            dresden()
+            bremen()
+            hannover()
+            wiesbaden()
+
+    except Exception as e:
+        print(e)
 
 
 def bremen():
@@ -36,6 +43,12 @@ def bremen():
     )
 
     db.save_slots_per_city(bremen, "Bremen")
+
+
+def wiesbaden():
+    wiesbaden = get_open_slots_from_wiesbaden()
+
+    db.save_slots_per_city(wiesbaden, "Wiesbaden")
 
 
 def duesseldorf():
@@ -58,9 +71,77 @@ def dresden():
 def hannover():
     hannover = get_open_slots_from_hannover(concern="personalausweis_antrag")
 
-    # slots.print_slots(hannover, "Hannover")
-
     db.save_slots_per_city(hannover, "Hannover")
+
+
+def wiesbaden():
+    wiesbaden = get_open_slots_from_wiesbaden()
+
+    # slots.print_slots(wiesbaden, "Wiesbaden:")
+
+    db.save_slots_per_city(wiesbaden, "Wiesbaden")
+
+
+def get_open_slots_from_wiesbaden() -> list[Slot]:
+    all_open_slots = []
+
+    with Browser() as browser:
+        browser.land_first_page(url=WIESBADEN["base_url"])
+
+        browser.get_element_with_attribute("_bl_2", "").send_keys(
+            WIESBADEN["form_data"]["nachname"]
+        )
+
+        browser.get_element_with_attribute("_bl_3", "").send_keys(
+            WIESBADEN["form_data"]["vorname"]
+        )
+
+        browser.get_element_with_attribute("_bl_4", "").send_keys(
+            WIESBADEN["form_data"]["email"]
+        )
+
+        browser.get_element_with_attribute("_bl_5", "").send_keys(
+            WIESBADEN["form_data"]["telefon"]
+        )
+
+        browser.click_button_with_id("ckbDatenschutz")
+
+        browser.get_element_with_attribute("type", "submit").click()
+
+        browser.get_element_by_css_selector(
+            "div.list-group > button:nth-child(1)"
+        ).click()
+
+        select_element = browser.get_element_with_attribute("_bl_9", "")
+
+        browser.select_option_by_value(select_element, "1")
+
+        browser.get_element_with_attribute("type", "submit").click()
+
+        # iterate over every button in list-group
+        for button in browser.get_elements_with_class("list-group-item"):
+            # 24.09.2024 10:30 / Bürgerbüro Marktstraße
+
+            # extract date and time
+            date_time = button.text.split(" / ")[0]
+            date = date_time.split(" ")[0]
+            time = date_time.split(" ")[1]
+
+            # convert date and time to datetime object
+            date_time = datetime.strptime(date + " " + time, "%d.%m.%Y %H:%M")
+
+            # extract office
+            office = button.text.split(" / ")[1]
+
+            office = office.replace("Bürgerbüro ", "")
+
+            slot = Slot(office, date_time)
+
+            all_open_slots.append(slot)
+
+        browser.quit()
+
+    return slots.add_concern_to_slots(all_open_slots, "Personalausweis - Antrag")
 
 
 def get_open_slots_from_hannover(concern) -> list[Slot]:

@@ -168,3 +168,19 @@ DRESDEN = {
         },
     },
 }
+
+WIESBADEN = {
+    "base_url": "https://dtms.wiesbaden.de/DTMSTerminWeb",
+    "form_data": {
+        "nachname": "Mustermann",
+        "vorname": "Max",
+        "email": "max.mustermann@mail.de",
+        "telefon": "01234567890",
+    },
+    "concerns": {
+        "personalausweis_antrag": {
+            "id": "service_ede3dafc-4941-4e08-9526-bd70d77160ce",
+            "name": "Personalausweis - Antrag",
+        },
+    },
+}

@@ -4,7 +4,8 @@ VALUES
     ('Duesseldorf'),
     ('Bremen'),
     ('Dresden'),
-    ('Hannover');
+    ('Hannover'),
+    ('Wiesbaden');
 
 INSERT INTO
     BuergerBuero (stadtteil, stadt)
@@ -20,6 +21,11 @@ VALUES
     ('Rath', 'Duesseldorf'),
     ('Unterbach', 'Duesseldorf'),
     ('Wersten/Holthausen', 'Duesseldorf');
+
+INSERT INTO
+    BuergerBuero (stadtteil, stadt)
+VALUES
+    ('Marktstraße', 'Wiesbaden');
 
 INSERT INTO
     BuergerBuero (stadtteil, stadt)
