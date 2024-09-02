@@ -17,3 +17,4 @@ dependencies:
   - requests
   - sqlite
   - django
+  - statsmodels
