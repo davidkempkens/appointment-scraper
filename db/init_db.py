@@ -1,4 +1,4 @@
-import src.database as db
+import db.database as db
 
 
 def main():

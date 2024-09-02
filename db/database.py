@@ -1,10 +1,10 @@
 from datetime import datetime
 import sqlite3
-import src.slots as slots
-from src.slots import Slot as Slot
+import slots.slots as slots
+from slots.slots import Slot as Slot
 
 
-def init_db(db=None, leave_connection_open=False, reset=False, file="database.db"):
+def init_db(db=None, leave_connection_open=False, reset=False, file="db/database.db"):
 
     with open("schema.sql") as f:
         schema = f.read()
@@ -27,7 +27,7 @@ def init_db(db=None, leave_connection_open=False, reset=False, file="database.db
     # print("Database initialized")
 
 
-def reset_db(db=None, file="database.db", leave_connection_open=False):
+def reset_db(db=None, file="db/database.db", leave_connection_open=False):
     if not db:
         db = sqlite3.connect(file)
     cur = db.cursor()
@@ -84,7 +84,7 @@ def update_slots(
         open = [open]
 
     if not db:
-        db = sqlite3.connect("database.db")
+        db = sqlite3.connect("db/database.db")
 
     cur = db.cursor()
 

@@ -1,7 +1,7 @@
-from src.browser import Browser
-import src.slots as slots
-from src.slots import Slot as Slot
-import src.database as db
+from scraper.browser import Browser
+import slots.slots as slots
+from slots.slots import Slot as Slot
+import db.database as db
 
 BREMEN = {
     "base_url": "https://termin.bremen.de/termine/select2?md=5",

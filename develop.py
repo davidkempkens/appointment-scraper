@@ -1,9 +1,9 @@
-from src.browser import Browser
-import src.constants as const
-from src.constants import DUESSELDORF, DRESDEN, BREMEN, HANNOVER, WIESBADEN
-import src.slots as slots
-from src.slots import Slot as Slot
-import src.database as db
+from scraper.browser import Browser
+import scraper.constants as const
+from scraper.constants import DUESSELDORF, DRESDEN, BREMEN, HANNOVER, WIESBADEN
+import slots.slots as slots
+from slots.slots import Slot as Slot
+import db.database as db
 from datetime import datetime
 
 

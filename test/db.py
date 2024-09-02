@@ -1,9 +1,9 @@
 import os
 import sqlite3
 import unittest
-import src.database as db
-import src.slots as slots
-from src.slots import Slot as Slot
+import db.database as db
+import slots.slots as slots
+from slots.slots import Slot as Slot
 
 
 class TestDatabase(unittest.TestCase):

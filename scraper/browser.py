@@ -6,7 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
 import os
-from src.slots import Slot as Slot
+from slots.slots import Slot as Slot
 from bs4 import BeautifulSoup
 from datetime import datetime
 
