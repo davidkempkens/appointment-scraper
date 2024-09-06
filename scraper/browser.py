@@ -125,9 +125,12 @@ class Browser(webdriver.Chrome):
         return WebDriverWait(self, 15).until(EC.element_to_be_clickable((By.ID, id)))
 
     def get_elements_with_class(self, class_name):
-        return WebDriverWait(self, 15).until(
-            EC.presence_of_all_elements_located((By.CLASS_NAME, class_name))
-        )
+        try:
+            return WebDriverWait(self, 15).until(
+                EC.presence_of_all_elements_located((By.CLASS_NAME, class_name))
+            )
+        except:
+            return []
 
     def get_open_slots_from_tabs_for_all_offices(
         self, office_window_handles
@@ -158,6 +161,9 @@ class Browser(webdriver.Chrome):
         open_slots = []
 
         buttons = self.get_elements_with_class("suggest_btn")
+
+        if buttons == []:
+            return open_slots
 
         for button in buttons:
 
@@ -233,7 +239,10 @@ class Browser(webdriver.Chrome):
             EC.element_to_be_clickable((By.XPATH, xpath))
         )
 
-    def get_element_by_css_selector(self, selector):
-        return WebDriverWait(self, 15).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, selector))
-        )
+    def get_element_by_css_selector(self, selector, time=15):
+        try:
+            return WebDriverWait(self, time).until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, selector))
+            )
+        except:
+            return None
