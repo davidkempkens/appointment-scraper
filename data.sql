@@ -5,7 +5,8 @@ VALUES
     ('Bremen'),
     ('Dresden'),
     ('Hannover'),
-    ('Wiesbaden');
+    ('Wiesbaden'),
+    ('Kiel');
 
 INSERT INTO
     BuergerBuero (stadtteil, stadt)
@@ -21,6 +22,17 @@ VALUES
     ('Rath', 'Duesseldorf'),
     ('Unterbach', 'Duesseldorf'),
     ('Wersten/Holthausen', 'Duesseldorf');
+
+INSERT INTO
+    BuergerBuero (stadtteil, stadt)
+VALUES
+    ('Dietrichsdorf', 'Kiel'),
+    ('Elmschenhagen', 'Kiel'),
+    ('Hassee', 'Kiel'),
+    ('Mettenhof', 'Kiel'),
+    ('Pries', 'Kiel'),
+    ('Rathaus', 'Kiel'),
+    ('Suchsdorf', 'Kiel');
 
 INSERT INTO
     BuergerBuero (stadtteil, stadt)

@@ -100,6 +100,9 @@ class Browser(webdriver.Chrome):
             Keys.CONTROL
         ).perform()
 
+        # return the window handle of the most recently opened tab
+        return self.window_handles[-1]
+
     def click_element(self, element, time=15):
         WebDriverWait(self, time).until(EC.element_to_be_clickable(element)).click()
 

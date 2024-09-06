@@ -3,6 +3,7 @@ from cities.bremen import bremen
 from cities.dresden import dresden
 from cities.duesseldorf import duesseldorf
 from cities.hannover import hannover
+from cities.kiel import kiel
 from cities.wiesbaden import wiesbaden
 from datetime import datetime
 
@@ -22,6 +23,8 @@ def main():
                 hannover()
             elif city == "wiesbaden":
                 wiesbaden()
+            elif city == "kiel":
+                kiel()
             else:
                 print("City not found")
 
