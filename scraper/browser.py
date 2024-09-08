@@ -106,10 +106,6 @@ class Browser(webdriver.Chrome):
     def click_element(self, element, time=15):
         WebDriverWait(self, time).until(EC.element_to_be_clickable(element)).click()
 
-    def enter_text(self, element, text, time=15):
-        WebDriverWait(self, time).until(EC.element_to_be_clickable(element)).send_keys(
-            text
-        )
 
     def select_option_by_value(self, element, value, time=15):
         select = WebDriverWait(self, time).until(EC.element_to_be_clickable(element))
@@ -196,12 +192,6 @@ class Browser(webdriver.Chrome):
         # return the list of open slots for this one office
         return open_slots
 
-    def check_if_element_exists(self, id, time=5):
-        try:
-            WebDriverWait(self, time).until(EC.presence_of_element_located((By.ID, id)))
-            return True
-        except:
-            return False
 
     def get_open_slots_from_element(self, element) -> list[Slot]:
 
