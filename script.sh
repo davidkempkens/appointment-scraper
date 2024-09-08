@@ -2,7 +2,7 @@
 
 source venv/Scripts/activate
 
-# first argumtent is the city name
+# first argument is the city name
 city=$1
 
 # check if the city name is provided
@@ -14,6 +14,6 @@ fi
 echo "City: $city"
 
 while true; do
-    python run.py $city
+    python run.py "$city"
     sleep 60
 done
