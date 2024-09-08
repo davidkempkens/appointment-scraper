@@ -6,7 +6,9 @@ VALUES
     ('Dresden'),
     ('Hannover'),
     ('Wiesbaden'),
-    ('Kiel');
+    ('Kiel'),
+    ('Magdeburg'),
+    ('Mainz');
 
 INSERT INTO
     BuergerBuero (stadtteil, stadt)
@@ -22,6 +24,33 @@ VALUES
     ('Rath', 'Duesseldorf'),
     ('Unterbach', 'Duesseldorf'),
     ('Wersten/Holthausen', 'Duesseldorf');
+
+INSERT INTO
+    BuergerBuero (stadtteil, stadt)
+VALUES
+    ('Altstadt', 'Mainz'),
+    ('Bretzenheim', 'Mainz'),
+    ('Drais', 'Mainz'),
+    ('Ebersheim', 'Mainz'),
+    ('Finthen', 'Mainz'),
+    ('Gonsenheim', 'Mainz'),
+    ('Hartenberg-Muenchfeld', 'Mainz'),
+    ('Hechtsheim', 'Mainz'),
+    ('Laubenheim', 'Mainz'),
+    ('Lerchenberg', 'Mainz'),
+    ('Mombach', 'Mainz'),
+    ('Neustadt', 'Mainz'),
+    ('Oberstadt', 'Mainz'),
+    ('Stadthaus', 'Mainz'),
+    ('Weisenau', 'Mainz');
+
+INSERT INTO
+    BuergerBuero (stadtteil, stadt)
+VALUES
+    ('Mitte', 'Magdeburg'),
+    ('Nord', 'Magdeburg'),
+    ('Sued', 'Magdeburg'),
+    ('West', 'Magdeburg');
 
 INSERT INTO
     BuergerBuero (stadtteil, stadt)

@@ -112,8 +112,8 @@ class Browser(webdriver.Chrome):
         select = Select(select)
         select.select_by_value(value)
 
-    def get_element_with_attribute(self, attribute, value):
-        return WebDriverWait(self, 15).until(
+    def get_element_with_attribute(self, attribute, value, time=15):
+        return WebDriverWait(self, time).until(
             EC.element_to_be_clickable((By.XPATH, f"//*[@{attribute}='{value}']"))
         )
 
