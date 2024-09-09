@@ -53,9 +53,9 @@ def save_slots_per_city(
     # slots.print_slots(updated, "Updated slots:", "fail")
     # slots.print_slots(new, "New slots:", "green")
 
-    print(
-        f"Open: {len(open)} Updated: {len(updated)} New: {len(new)} in {city} at {now}"
-    )
+    now = datetime.now().strftime("%H:%M")
+
+    print(f"{now} - {city} - Open: {len(open)} Updated: {len(updated)} New: {len(new)}")
 
 
 def update_slots(
