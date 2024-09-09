@@ -22,6 +22,15 @@ MAINZ = {
         "doclist_item_750_49392",
         "doclist_item_750_49394",
     ],
+    "checkboxes_xpath": [
+        '//*[@id="TevisDialog"]/div/div/div[2]/div/div[1]/div/label',
+        '//*[@id="TevisDialog"]/div/div/div[2]/div/div[2]/div/label',
+        '//*[@id="TevisDialog"]/div/div/div[2]/div/div[3]/div/label',
+        '//*[@id="TevisDialog"]/div/div/div[2]/div/div[4]/div/label',
+        '//*[@id="TevisDialog"]/div/div/div[2]/div/div[5]/div/label',
+        '//*[@id="TevisDialog"]/div/div/div[2]/div/div[6]/div/label',
+        '//*[@id="TevisDialog"]/div/div/div[2]/div/div[7]/div/label',
+    ],
     "offices": {
         "Marienborn": {
             "name": "Ortsverwaltung Marienborn (barrierefrei)",
@@ -63,7 +72,7 @@ MAINZ = {
             "name": "Ortsverwaltung Hartenberg-Münchfeld (barrierefrei)",
             "value": "Ortsverwaltung Hartenberg-Münchfeld (barrierefrei)  auswählen",
         },
-        "Altstadt": {
+        "Altstadt_Mainz": {
             "name": "Ortsverwaltung Altstadt (barrierefrei)",
             "value": "Ortsverwaltung Altstadt (barrierefrei)  auswählen",
         },
@@ -83,7 +92,7 @@ MAINZ = {
             "name": "Ortsverwaltung Oberstadt (nicht barrierefrei)",
             "value": "Ortsverwaltung Oberstadt (nicht barrierefrei)  auswählen",
         },
-        "Neustadt": {
+        "Neustadt_Mainz": {
             "name": "Ortsverwaltung Neustadt (barrierefrei)",
             "value": "Ortsverwaltung Neustadt (barrierefrei)  auswählen",
         },
@@ -94,11 +103,7 @@ MAINZ = {
 def mainz():
     mainz = get_open_slots_from_mainz()
 
-    slots.print_slots(mainz)
-
-    print(len(mainz))
-
-    # db.save_slots_per_city(mainz, "Mainz")
+    db.save_slots_per_city(mainz, "Mainz")
 
 
 def get_open_slots_from_mainz():
@@ -114,15 +119,19 @@ def get_open_slots_from_mainz():
 
         browser.click_button_with_id("WeiterButton")  # Weiter
 
-        for checkbox_id in MAINZ["checkboxes_ids"]:
-            browser.get_element_with_attribute("for", checkbox_id).click()
+        # for checkbox_id in MAINZ["checkboxes_ids"]:
+        #     # browser.click_button_with_id(checkbox_id)
+        #     browser.get_element_with_attribute("for", checkbox_id).click()
+
+        for checkbox_xpath in MAINZ["checkboxes_xpath"]:
+            browser.get_element_by_xpath(checkbox_xpath).click()
 
         browser.click_button_with_id("OKButton")  # OK
 
         open_tabs_offices = {}
 
         for office in MAINZ["offices"]:
-            print("Office: ", office)
+            # print("Office: ", office)
             h3 = browser.get_h3_containing_office_names(
                 search_term=MAINZ["offices"][office]["name"]
             )[0]
@@ -141,8 +150,10 @@ def get_open_slots_from_mainz():
 
         for tab in open_tabs_offices:
             browser.switch_to.window(open_tabs_offices[tab])
-            all_open_slots.extend(browser.get_open_slots_for_one_office(tab))
+            slots_for_one_office = browser.get_open_slots_for_one_office(tab)
+            all_open_slots.extend(slots_for_one_office)
+            browser.close()
 
-        browser.quit()
+    browser.quit()
 
     return slots.add_concern_to_slots(all_open_slots, "Personalausweis - Antrag")

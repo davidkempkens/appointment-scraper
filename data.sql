@@ -28,7 +28,7 @@ VALUES
 INSERT INTO
     BuergerBuero (stadtteil, stadt)
 VALUES
-    ('Altstadt', 'Mainz'),
+    ('Altstadt_Mainz', 'Mainz'),  -- Renamed for uniqueness
     ('Bretzenheim', 'Mainz'),
     ('Drais', 'Mainz'),
     ('Ebersheim', 'Mainz'),
@@ -39,7 +39,7 @@ VALUES
     ('Laubenheim', 'Mainz'),
     ('Lerchenberg', 'Mainz'),
     ('Mombach', 'Mainz'),
-    ('Neustadt', 'Mainz'),
+    ('Neustadt_Mainz', 'Mainz'),  -- Renamed for uniqueness
     ('Oberstadt', 'Mainz'),
     ('Stadthaus', 'Mainz'),
     ('Weisenau', 'Mainz');
