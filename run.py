@@ -27,10 +27,10 @@ def main():
             }.get(city, lambda: print("City not found"))()
 
     except Exception as e:
-        print(f"An error occured: {e} at: {datetime.now()}")
+        print(f"An error occurred: {e} at: {datetime.now()}")
 
         # try again
-        print("Trying again...")
+        # print("Trying again...")
         # main()
 
 
