@@ -2,6 +2,14 @@ from datetime import datetime
 import locale
 
 
+def convert_to_datetime(date):
+    if date is None:
+        return None
+    if isinstance(date, datetime):
+        return date
+    return datetime.fromisoformat(date)
+
+
 class Slot:
     """
     A slot is a date and time at a specific office
@@ -27,17 +35,10 @@ class Slot:
         updated: datetime | str - the date the slot was not available for the first time
         """
         self.office = convert_german_vowels(office)
-        self.date = self.convert_to_datetime(date)
+        self.date = convert_to_datetime(date)
         self.concern = concern
-        self.created: datetime | str = self.convert_to_datetime(created)
-        self.updated: datetime | str = self.convert_to_datetime(updated)
-
-    def convert_to_datetime(self, date):
-        if date is None:
-            return None
-        if isinstance(date, datetime):
-            return date
-        return datetime.fromisoformat(date)
+        self.created: datetime | str = convert_to_datetime(created)
+        self.updated: datetime | str = convert_to_datetime(updated)
 
     def __eq__(self, other):
         return self.office == other.office and self.date == other.date
