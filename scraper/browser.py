@@ -35,7 +35,7 @@ class Browser(webdriver.Chrome):
     def land_first_page(self, url):
         self.get(url)
 
-    def click_button_with_id(self, id, time=15):
+    def click_button_with_id(self, id, time=3):
         button = WebDriverWait(self, time).until(
             EC.element_to_be_clickable((By.ID, id))
         )
@@ -44,16 +44,17 @@ class Browser(webdriver.Chrome):
     def get_h3_containing_office_names(
         self,
         search_term="Bürgerbüro",
+        time=5,
     ) -> list:
-        office_elements = WebDriverWait(self, 15).until(
+        office_elements = WebDriverWait(self, time).until(
             EC.presence_of_all_elements_located(
                 (By.XPATH, f"//*[contains(@title, '{search_term}')]")
             )
         )
         return office_elements
 
-    def get_all_h3_elements(self) -> list:
-        return WebDriverWait(self, 15).until(
+    def get_all_h3_elements(self, time=3) -> list:
+        return WebDriverWait(self, time).until(
             EC.presence_of_all_elements_located((By.TAG_NAME, "h3"))
         )
 
@@ -103,26 +104,25 @@ class Browser(webdriver.Chrome):
         # return the window handle of the most recently opened tab
         return self.window_handles[-1]
 
-    def click_element(self, element, time=15):
+    def click_element(self, element, time=3):
         WebDriverWait(self, time).until(EC.element_to_be_clickable(element)).click()
 
-
-    def select_option_by_value(self, element, value, time=15):
+    def select_option_by_value(self, element, value, time=3):
         select = WebDriverWait(self, time).until(EC.element_to_be_clickable(element))
         select = Select(select)
         select.select_by_value(value)
 
-    def get_element_with_attribute(self, attribute, value, time=15):
+    def get_element_with_attribute(self, attribute, value, time=3):
         return WebDriverWait(self, time).until(
             EC.element_to_be_clickable((By.XPATH, f"//*[@{attribute}='{value}']"))
         )
 
-    def get_element_with_id(self, id):
-        return WebDriverWait(self, 15).until(EC.element_to_be_clickable((By.ID, id)))
+    def get_element_with_id(self, id, time=3):
+        return WebDriverWait(self, time).until(EC.element_to_be_clickable((By.ID, id)))
 
-    def get_elements_with_class(self, class_name):
+    def get_elements_with_class(self, class_name, time=3):
         try:
-            return WebDriverWait(self, 15).until(
+            return WebDriverWait(self, time).until(
                 EC.presence_of_all_elements_located((By.CLASS_NAME, class_name))
             )
         except:
@@ -192,7 +192,6 @@ class Browser(webdriver.Chrome):
         # return the list of open slots for this one office
         return open_slots
 
-
     def get_open_slots_from_element(self, element) -> list[Slot]:
 
         open_slots = []
@@ -224,12 +223,12 @@ class Browser(webdriver.Chrome):
 
         return open_slots
 
-    def get_element_by_xpath(self, xpath):
-        return WebDriverWait(self, 15).until(
+    def get_element_by_xpath(self, xpath, time=3):
+        return WebDriverWait(self, time).until(
             EC.element_to_be_clickable((By.XPATH, xpath))
         )
 
-    def get_element_by_css_selector(self, selector, time=15):
+    def get_element_by_css_selector(self, selector, time=3):
         try:
             return WebDriverWait(self, time).until(
                 EC.element_to_be_clickable((By.CSS_SELECTOR, selector))
