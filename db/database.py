@@ -109,6 +109,9 @@ def update_slots(
 
     cur = db.cursor()
 
+    # PRAGMA foreign_keys = ON;
+    cur.execute("PRAGMA foreign_keys = ON;")
+
     all_open_slots_in_db = cur.execute(
         """
         SELECT 
