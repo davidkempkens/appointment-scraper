@@ -4,8 +4,7 @@ import slots.slots as slots
 from slots.slots import Slot as Slot
 
 
-def init_db(db=None, leave_connection_open=False, reset=False, file="db/database.db"):
-
+def init_db(db=None, leave_connection_open=False, file="db/database.db"):
     with open("schema.sql") as f:
         schema = f.read()
 
@@ -40,14 +39,18 @@ def reset_db(db=None, file="db/database.db", leave_connection_open=False):
 
 
 def save_slots_per_city(
-    slots: list[Slot],
-    city: str,
-    now=datetime.now(),
-    db=None,
-    leave_connection_open=False,
+        slots_to_be_saved: list[Slot],
+        city: str,
+        now=datetime.now(),
+        db=None,
+        leave_connection_open=False,
 ):
     # print(f"Saving slots for {city} at {now}")
-    open, updated, new = update_slots(slots, timestamp=now, city=city)
+    currently_open, updated, new = update_slots(slots_to_be_saved,
+                                                timestamp=now,
+                                                city=city,
+                                                db=db,
+                                                leave_connection_open=leave_connection_open)
 
     # slots.print_slots(open, "Open slots:")
     # slots.print_slots(updated, "Updated slots:", "fail")
@@ -67,21 +70,21 @@ def save_slots_per_city(
 
     now = datetime.now().strftime("%H:%M")
 
-    logstr = f"{now} "
-    logstr += f"{colors['warning']}{city}{colors['end']} - "
-    logstr += f"{colors['blue']}Open: {len(open)}{colors['end']} "
-    logstr += f"{colors['fail']}Gone: {len(updated)}{colors['end']} "
-    logstr += f"{colors['green']}New: {len(new)}{colors['end']}"
+    log_string = f"{now} "
+    log_string += f"{colors['warning']}{city}{colors['end']} - "
+    log_string += f"{colors['blue']}Open: {len(currently_open)}{colors['end']} "
+    log_string += f"{colors['fail']}Gone: {len(updated)}{colors['end']} "
+    log_string += f"{colors['green']}New: {len(new)}{colors['end']}"
 
-    print(logstr)
+    print(log_string)
 
 
 def update_slots(
-    open: list[Slot],
-    city: str,
-    timestamp=datetime.now(),
-    db=None,
-    leave_connection_open=False,
+        current: list[Slot],
+        city: str,
+        timestamp=datetime.now(),
+        db=None,
+        leave_connection_open=False,
 ) -> tuple[list[Slot], list[Slot], list[Slot]]:
     """
     updates the slots in the database with the current open slots
@@ -98,8 +101,8 @@ def update_slots(
     - new: new slots that are now open, previously unknown
     """
 
-    if isinstance(open, Slot):
-        open = [open]
+    if isinstance(current, Slot):
+        current = [current]
 
     if not db:
         db = sqlite3.connect("db/database.db")
@@ -123,7 +126,7 @@ def update_slots(
     # tuple (office, date, concern) -> Slot
     all_open_slots_in_db = slots.create_slots(all_open_slots_in_db)
 
-    updated = slots.difference(all_open_slots_in_db, open)
+    updated = slots.difference(all_open_slots_in_db, current)
     # print(f"Updated slots: {updated}")
 
     # close all slots that are not in currently_open_slots
@@ -137,7 +140,7 @@ def update_slots(
         [(timestamp, slot.office, slot.date) for slot in updated],
     )
 
-    new = slots.difference(open, all_open_slots_in_db)
+    new = slots.difference(current, all_open_slots_in_db)
 
     # save all slots, that are in currently_open_slots, but not in db
     cur.executemany(
@@ -154,4 +157,4 @@ def update_slots(
     if not leave_connection_open:
         db.close()
 
-    return (open, updated, new)
+    return current, updated, new
