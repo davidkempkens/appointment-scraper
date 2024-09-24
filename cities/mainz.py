@@ -103,7 +103,7 @@ MAINZ = {
 def mainz():
     mainz = get_open_slots_from_mainz()
 
-    db.save_slots_per_city(mainz, "Mainz")
+    db.save_slots_per_city(mainz_slots, "Mainz")
 
 
 def get_open_slots_from_mainz():
