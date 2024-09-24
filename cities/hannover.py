@@ -36,25 +36,28 @@ def hannover():
 def get_open_slots_from_hannover(concern) -> list[Slot]:
     all_open_slots = []
 
-    with Browser() as browser:
-        browser.land_first_page(url=HANNOVER["base_url"])
+    try:
+        with Browser() as browser:
+            browser.land_first_page(url=HANNOVER["base_url"])
 
-        # enter postal code because it is prompted
-        browser.get_element_with_id("input-field").send_keys(HANNOVER["plz"])
+            # enter postal code because it is prompted
+            browser.get_element_with_id("input-field").send_keys(HANNOVER["plz"])
 
-        # select Personalausweis
-        select_element = browser.get_element_with_id(
-            HANNOVER["concerns"][concern]["id"]
-        )
-        browser.select_option_by_value(select_element, "1")
-        browser.get_element_with_attribute("data-testid", "button_next").click()
+            # select Personalausweis
+            select_element = browser.get_element_with_id(
+                HANNOVER["concerns"][concern]["id"]
+            )
+            browser.select_option_by_value(select_element, "1")
+            browser.get_element_with_attribute("data-testid", "button_next").click()
 
-        browser.click_button_with_id("locations_selected_all_top")
-        browser.click_button_with_id("next-button")
+            browser.click_button_with_id("locations_selected_all_top")
+            browser.click_button_with_id("next-button")
 
-        slots_element = browser.get_elements_with_class("timeslot_cards")
-        all_open_slots = browser.get_open_slots_from_element(slots_element)
-
+            slots_element = browser.get_elements_with_class("timeslot_cards")
+            all_open_slots = browser.get_open_slots_from_element(slots_element)
+    except Exception as e:
+        print(f"Error in Hannover: {e}")
+    finally:
         browser.quit()
 
     return slots.add_concern_to_slots(all_open_slots, "Personalausweis - Antrag")

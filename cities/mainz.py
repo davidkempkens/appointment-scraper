@@ -110,50 +110,56 @@ def get_open_slots_from_mainz():
 
     all_open_slots = []
 
-    with Browser() as browser:
-        browser.land_first_page(MAINZ["base_url"])
+    try:
 
-        browser.click_button_with_id("cookie_msg_btn_no")  # Decline Cookies
+        with Browser() as browser:
+            browser.land_first_page(MAINZ["base_url"])
 
-        browser.click_button_with_id(MAINZ["concerns"]["personalausweis_antrag"]["id"])
+            browser.click_button_with_id("cookie_msg_btn_no")  # Decline Cookies
 
-        browser.click_button_with_id("WeiterButton")  # Weiter
+            browser.click_button_with_id(
+                MAINZ["concerns"]["personalausweis_antrag"]["id"]
+            )
 
-        # for checkbox_id in MAINZ["checkboxes_ids"]:
-        #     # browser.click_button_with_id(checkbox_id)
-        #     browser.get_element_with_attribute("for", checkbox_id).click()
+            browser.click_button_with_id("WeiterButton")  # Weiter
 
-        for checkbox_xpath in MAINZ["checkboxes_xpath"]:
-            browser.get_element_by_xpath(checkbox_xpath).click()
+            # for checkbox_id in MAINZ["checkboxes_ids"]:
+            #     # browser.click_button_with_id(checkbox_id)
+            #     browser.get_element_with_attribute("for", checkbox_id).click()
 
-        browser.click_button_with_id("OKButton")  # OK
+            for checkbox_xpath in MAINZ["checkboxes_xpath"]:
+                browser.get_element_by_xpath(checkbox_xpath).click()
 
-        open_tabs_offices = {}
+            browser.click_button_with_id("OKButton")  # OK
 
-        for office in MAINZ["offices"]:
-            # print("Office: ", office)
-            h3 = browser.get_h3_containing_office_names(
-                search_term=MAINZ["offices"][office]["name"]
-            )[0]
+            open_tabs_offices = {}
 
-            if "Termine" in h3.get_attribute("title"):
-                if "false" in h3.get_attribute("aria-expanded"):
-                    browser.click_element(h3)
+            for office in MAINZ["offices"]:
+                # print("Office: ", office)
+                h3 = browser.get_h3_containing_office_names(
+                    search_term=MAINZ["offices"][office]["name"]
+                )[0]
 
-                input_element = browser.get_element_with_attribute(
-                    "value", MAINZ["offices"][office]["value"], time=3
-                )
+                if "Termine" in h3.get_attribute("title"):
+                    if "false" in h3.get_attribute("aria-expanded"):
+                        browser.click_element(h3)
 
-                tab_to_office = browser.open_element_in_new_tab(input_element)
+                    input_element = browser.get_element_with_attribute(
+                        "value", MAINZ["offices"][office]["value"], time=3
+                    )
 
-                open_tabs_offices[office] = tab_to_office
+                    tab_to_office = browser.open_element_in_new_tab(input_element)
 
-        for tab in open_tabs_offices:
-            browser.switch_to.window(open_tabs_offices[tab])
-            slots_for_one_office = browser.get_open_slots_for_one_office(tab)
-            all_open_slots.extend(slots_for_one_office)
-            browser.close()
+                    open_tabs_offices[office] = tab_to_office
 
-    browser.quit()
+            for tab in open_tabs_offices:
+                # print("Tab: ", tab)
+                browser.switch_to.window(open_tabs_offices[tab])
+                slots_for_one_office = browser.get_open_slots_for_one_office(tab)
+                # print(len(slots_for_one_office), " slots for ", tab)
+                all_open_slots.extend(slots_for_one_office)
+                browser.close()
+    finally:
+        browser.quit()
 
     return slots.add_concern_to_slots(all_open_slots, "Personalausweis - Antrag")

@@ -63,41 +63,44 @@ def kiel():
 def get_open_slots_from_kiel() -> list[Slot]:
     all_open_slots = []
 
-    with Browser() as browser:
-        browser.land_first_page(url=KIEL["base_url"])
+    try:
+        with Browser() as browser:
+            browser.land_first_page(url=KIEL["base_url"])
 
-        browser.click_button_with_id("cookie_msg_btn_no")  # Decline Cookies
+            browser.click_button_with_id("cookie_msg_btn_no")  # Decline Cookies
 
-        concern = KIEL["concerns"]["personalausweis_antrag"]  # Personalausweis - Antrag
-        browser.click_button_with_id(concern["id"])  # Personalausweis - Antrag
+            concern = KIEL["concerns"][
+                "personalausweis_antrag"
+            ]  # Personalausweis - Antrag
+            browser.click_button_with_id(concern["id"])  # Personalausweis - Antrag
 
-        browser.click_button_with_id("WeiterButton")  # Weiter
-        browser.click_button_with_id("OKButton")  # OK
+            browser.click_button_with_id("WeiterButton")  # Weiter
+            browser.click_button_with_id("OKButton")  # OK
 
-        open_tabs_offices = {}
+            open_tabs_offices = {}
 
-        for tab in KIEL["offices"]:
-            h3 = browser.get_h3_containing_office_names(
-                search_term=KIEL["offices"][tab]["name"]
-            )[0]
+            for tab in KIEL["offices"]:
+                h3 = browser.get_h3_containing_office_names(
+                    search_term=KIEL["offices"][tab]["name"]
+                )[0]
 
-            if "Termine" in h3.get_attribute("title"):
-                if "false" in h3.get_attribute("aria-expanded"):
-                    browser.click_element(h3)
+                if "Termine" in h3.get_attribute("title"):
+                    if "false" in h3.get_attribute("aria-expanded"):
+                        browser.click_element(h3)
 
-                input_element = browser.get_element_with_attribute(
-                    "value", KIEL["offices"][tab]["value"]
-                )
+                    input_element = browser.get_element_with_attribute(
+                        "value", KIEL["offices"][tab]["value"]
+                    )
 
-                tab_to_office = browser.open_element_in_new_tab(input_element)
+                    tab_to_office = browser.open_element_in_new_tab(input_element)
 
-                open_tabs_offices[tab] = tab_to_office
+                    open_tabs_offices[tab] = tab_to_office
 
-        for tab in open_tabs_offices:
-            browser.switch_to.window(open_tabs_offices[tab])
-            all_open_slots.extend(browser.get_open_slots_for_one_office(tab))
-            # browser.close()
-
+            for tab in open_tabs_offices:
+                browser.switch_to.window(open_tabs_offices[tab])
+                all_open_slots.extend(browser.get_open_slots_for_one_office(tab))
+                # browser.close()
+    finally:
         browser.quit()
 
     return slots.add_concern_to_slots(all_open_slots, "Personalausweis - Antrag")

@@ -49,24 +49,26 @@ def get_open_slots_from_magdeburg():
 
     all_open_slots = []
 
-    with Browser() as browser:
-        browser.land_first_page(MAGDEBURG["base_url"])
+    try:
 
-        browser.click_button_with_id("cookie_msg_btn_no")  # Decline Cookies
+        with Browser() as browser:
+            browser.land_first_page(MAGDEBURG["base_url"])
 
-        browser.click_button_with_id(MAGDEBURG["area"]["personaldokumente"]["id"])
+            browser.click_button_with_id("cookie_msg_btn_no")  # Decline Cookies
 
-        browser.click_button_with_id(MAGDEBURG["concerns"]["personalausweis"]["id"])
+            browser.click_button_with_id(MAGDEBURG["area"]["personaldokumente"]["id"])
 
-        browser.click_button_with_id("WeiterButton")  # Weiter
-        browser.click_button_with_id("OKButton")  # OK
+            browser.click_button_with_id(MAGDEBURG["concerns"]["personalausweis"]["id"])
 
-        office_elements = browser.get_h3_containing_office_names(
-            search_term="BürgerBüro"
-        )
-        tabs = browser.open_offices_in_new_tabs(office_elements)
+            browser.click_button_with_id("WeiterButton")  # Weiter
+            browser.click_button_with_id("OKButton")  # OK
 
-        all_open_slots = browser.get_open_slots_from_tabs_for_all_offices(tabs)
+            office_elements = browser.get_h3_containing_office_names(
+                search_term="BürgerBüro"
+            )
+            tabs = browser.open_offices_in_new_tabs(office_elements)
 
+            all_open_slots = browser.get_open_slots_from_tabs_for_all_offices(tabs)
+    finally:
         browser.quit()
     return all_open_slots
