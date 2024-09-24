@@ -4,6 +4,8 @@ chromedriver.exe
 sqlite3.exe
 database.db
 database.db-journal
+.idea/
+.vscode/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
