@@ -41,10 +41,9 @@ class Slot:
         self.updated: datetime | str = convert_to_datetime(updated)
 
     def __eq__(self, other):
-        return self.office == other.office and self.date == other.date
-
-    def __hash__(self):
-        return hash((self.office, self.date))
+        return str(self.office) == str(other.office) and str(self.date) == str(
+            other.date
+        )
 
     def __repr__(self):
         return f"{self.office}: {self.date.strftime('%a %d.%m %H:%M')} - {self.concern}"
