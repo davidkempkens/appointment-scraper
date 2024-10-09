@@ -56,6 +56,9 @@ def create_slots(slots: list[tuple]) -> list[Slot]:
 
     slots: list[tuple] - a list of tuples with the format (office, date[, concern [, created [, updated]]])
     """
+    if isinstance(slots, tuple):
+        slots = [slots]
+
     return [Slot(*slot) for slot in slots if not isinstance(slot, Slot)]
 
 
