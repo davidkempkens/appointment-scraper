@@ -5,6 +5,7 @@ database.db
 database.db-journal
 .idea/
 .vscode/
+*.db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
