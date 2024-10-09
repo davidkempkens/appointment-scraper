@@ -2,6 +2,7 @@ import sys
 from cities.bremen import bremen
 from cities.dresden import dresden
 from cities.duesseldorf import duesseldorf
+from cities.duesseldorf import debug
 from cities.hannover import hannover
 from cities.kiel import kiel
 from cities.magdeburg import magdeburg
@@ -19,6 +20,7 @@ def main():
                 "bremen": bremen,
                 "dresden": dresden,
                 "duesseldorf": duesseldorf,
+                "debug": debug,
                 "hannover": hannover,
                 "kiel": kiel,
                 "magdeburg": magdeburg,

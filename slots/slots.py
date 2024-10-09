@@ -67,6 +67,29 @@ def difference(A: list[Slot], B: list[Slot]) -> list[Slot]:
     return [a for a in A if a not in B]
 
 
+def new_difference(A: list[Slot], B: list[Slot]) -> list[Slot]:
+    """
+    returns all slots in A that are not in B
+    """
+    not_in_b = []
+
+    # print("len(A):", len(A))
+    # print("len(B):", len(B))
+    for a in A:
+        a_found_in_b = False
+        for b in B:
+            if a == b:
+                a_found_in_b = True
+                # print(f"{a} == {b}")
+                break
+            # else:
+            # print(f"{a} != {b}")
+        if not a_found_in_b:
+            print(f"{a} not in B")
+            not_in_b.append(a)
+    return not_in_b
+
+
 def add_concern_to_slots(slots: list[Slot], concern: str) -> list[Slot]:
     """
     adds a concern to all slots

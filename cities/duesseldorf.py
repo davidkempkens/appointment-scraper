@@ -1,3 +1,4 @@
+import sqlite3
 from scraper.browser import Browser
 import slots.slots as slots
 from slots.slots import Slot as Slot
@@ -101,6 +102,21 @@ def duesseldorf():
         sub_concern="personalausweis_antrag",
     )
     db.save_slots_per_city(duesseldorf, "Duesseldorf")
+
+    # db_duesseldorf = sqlite3.connect("db/duesseldorf.db")
+    # db.save_slots_per_city(duesseldorf, city="Duesseldorf", db=db_duesseldorf)
+
+
+def debug():
+    duesseldorf = get_open_slots_from_duesseldorf(
+        area="einwohnerangelegenheiten",
+        concern="ausweise",
+        sub_concern="personalausweis_antrag",
+    )
+    db_duesseldorf = sqlite3.connect("db/duesseldorf.db")
+    db.save_slots_per_city(
+        duesseldorf, city="Duesseldorf", db=db_duesseldorf, debug=True
+    )
 
 
 def get_open_slots_from_duesseldorf(area, concern, sub_concern) -> list[Slot]:
