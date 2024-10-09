@@ -1,6 +1,100 @@
 from datetime import datetime
 import locale
 
+OFFICES = {
+    "Bremen": [
+        {
+            "name": "BürgerServiceCenter-Mitte",
+            "pk_sql": "BuergerServiceCenter-Mitte",
+            "currently": "BuergerServiceCenter-Mitte",
+        }
+    ],
+    "Dresden": [
+        {"name": "Bürgerbüro Altstadt", "pk_sql": "Buergerbuero_Altstadt"},
+        {"name": "Bürgerbüro Blasewitz", "pk_sql": "Buergerbuero_Blasewitz"},
+        {"name": "Meldestelle Cossebaude", "pk_sql": "Meldestelle_Cossebaude"},
+        {"name": "Bürgerbüro Cotta", "pk_sql": "Buergerbuero_Cotta"},
+        {"name": "Junioramt", "pk_sql": "Junioramt"},
+        {"name": "Bürgerbüro Klotzsche", "pk_sql": "Buergerbuero_Klotzsche"},
+        {"name": "Meldestelle Langebrück", "pk_sql": "Meldestelle_Langebrueck"},
+        {"name": "Bürgerbüro Leuben", "pk_sql": "Buergerbuero_Leuben"},
+        {"name": "Bürgerbüro Neustadt", "pk_sql": "Buergerbuero_Neustadt"},
+        {"name": "Bürgerbüro Pieschen", "pk_sql": "Buergerbuero_Pieschen"},
+        {"name": "Bürgerbüro Plauen", "pk_sql": "Buergerbuero_Plauen"},
+        {"name": "Bürgerbüro Prohlis", "pk_sql": "Buergerbuero_Prohlis"},
+        {"name": "Meldestelle Weixdorf", "pk_sql": "Meldestelle_Weixdorf"},
+    ],
+    "Duesseldorf": [
+        {"name": "Bürgerbüro Benrath", "pk_sql": "Buergerbuero_Benrath"},
+        {"name": "Bürgerbüro Bilk", "pk_sql": "Buergerbuero_Bilk"},
+        {
+            "name": "Bürgerbüro Dienstleistungszentrum",
+            "pk_sql": "Buergerbuero_Dienstleistungszentrum",
+        },
+        {"name": "Bürgerbüro Eller", "pk_sql": "Buergerbuero_Eller"},
+        {"name": "Bürgerbüro Garath", "pk_sql": "Buergerbuero_Garath"},
+        {"name": "Bürgerbüro Gerresheim", "pk_sql": "Buergerbuero_Gerresheim"},
+        {"name": "Bürgerbüro Kaiserswerth", "pk_sql": "Buergerbuero_Kaiserswerth"},
+        {"name": "Bürgerbüro Oberkassel", "pk_sql": "Buergerbuero_Oberkassel"},
+        {"name": "Bürgerbüro Rath", "pk_sql": "Buergerbuero_Rath"},
+        {"name": "Bürgerbüro Unterbach", "pk_sql": "Buergerbuero_Unterbach"},
+        {
+            "name": "Bürgerbüro Wersten/Holthausen",
+            "pk_sql": "Buergerbuero_Wersten_Holthausen",
+        },
+    ],
+    "Hannover": [
+        {"name": "Bürgeramt Aegi", "pk_sql": "Buergeramt_Aegi"},
+        {"name": "Bürgeramt Bemerode", "pk_sql": "Buergeramt_Bemerode"},
+        {"name": "Bürgeramt Doehren", "pk_sql": "Buergeramt_Doehren"},
+        {"name": "Bürgeramt Herrenhausen", "pk_sql": "Buergeramt_Herrenhausen"},
+        {"name": "Bürgeramt Linden", "pk_sql": "Buergeramt_Linden"},
+        {"name": "Bürgeramt Podbi-Park", "pk_sql": "Buergeramt_Podbi_Park"},
+        {"name": "Bürgeramt Ricklingen", "pk_sql": "Buergeramt_Ricklingen"},
+        {"name": "Bürgeramt Sahlkamp", "pk_sql": "Buergeramt_Sahlkamp"},
+        {"name": "Bürgeramt Schuetzenplatz", "pk_sql": "Buergeramt_Schuetzenplatz"},
+    ],
+    "Kiel": [
+        {"name": "Dietrichsdorf Stadtteilamt", "pk_sql": "Dietrichsdorf_Stadtteilamt"},
+        {"name": "Elmschenhagen Stadtteilamt", "pk_sql": "Elmschenhagen_Stadtteilamt"},
+        {"name": "Hassee Stadtteilamt", "pk_sql": "Hassee_Stadtteilamt"},
+        {"name": "Mettenhof Stadtteilamt", "pk_sql": "Mettenhof_Stadtteilamt"},
+        {"name": "Pries Stadtteilamt", "pk_sql": "Pries_Stadtteilamt"},
+        {"name": "Rathaus", "pk_sql": "Rathaus"},
+        {"name": "Suchsdorf Stadtteilamt", "pk_sql": "Suchsdorf_Stadtteilamt"},
+    ],
+    "Magdeburg": [
+        {"name": "BürgerBüro Mitte", "pk_sql": "BuergerBuero_Mitte"},
+        {"name": "BürgerBüro Nord", "pk_sql": "BuergerBuero_Nord"},
+        {"name": "BürgerBüro Süd", "pk_sql": "BuergerBuero_Sued"},
+        {"name": "BürgerBüro West", "pk_sql": "BuergerBuero_West"},
+    ],
+    "Mainz": [
+        {"name": "Ortsverwaltung Marienborn", "pk_sql": "Ortsverwaltung_Marienborn"},
+        {"name": "Ortsverwaltung Finthen", "pk_sql": "Ortsverwaltung_Finthen"},
+        {"name": "Ortsverwaltung Hechtsheim", "pk_sql": "Ortsverwaltung_Hechtsheim"},
+        {"name": "Ortsverwaltung Weisenau", "pk_sql": "Ortsverwaltung_Weisenau"},
+        {"name": "Ortsverwaltung Ebersheim", "pk_sql": "Ortsverwaltung_Ebersheim"},
+        {"name": "Ortsverwaltung Drais", "pk_sql": "Ortsverwaltung_Drais"},
+        {"name": "Bürgerservice Stadthaus", "pk_sql": "Buergerservice_Stadthaus"},
+        {"name": "Ortsverwaltung Lerchenberg", "pk_sql": "Ortsverwaltung_Lerchenberg"},
+        {"name": "Ortsverwaltung Gonsenheim", "pk_sql": "Ortsverwaltung_Gonsenheim"},
+        {
+            "name": "Ortsverwaltung Hartenberg-Münchfeld",
+            "pk_sql": "Ortsverwaltung_Hartenberg_Muenchfeld",
+        },
+        {"name": "Ortsverwaltung Altstadt", "pk_sql": "Ortsverwaltung_Altstadt"},
+        {"name": "Ortsverwaltung Laubenheim", "pk_sql": "Ortsverwaltung_Laubenheim"},
+        {"name": "Ortsverwaltung Mombach", "pk_sql": "Ortsverwaltung_Mombach"},
+        {"name": "Ortsverwaltung Bretzenheim", "pk_sql": "Ortsverwaltung_Bretzenheim"},
+        {"name": "Ortsverwaltung Oberstadt", "pk_sql": "Ortsverwaltung_Oberstadt"},
+        {"name": "Ortsverwaltung Neustadt", "pk_sql": "Ortsverwaltung_Neustadt"},
+    ],
+    "Wiesbaden": [
+        {"name": "Bürgerbüro Marktstraße", "pk_sql": "Buergerbuero_Marktstrasse"},
+    ],
+}
+
 
 def convert_to_datetime(date):
     if date is None:
