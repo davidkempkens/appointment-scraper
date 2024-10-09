@@ -5,7 +5,7 @@ import sqlite3
 
 
 def fetch_slots_from_db():
-    db_file = "backup/database_2024-08-28_14-36-07.db"
+    db_file = "db/database.db"
     conn = sqlite3.connect(db_file)
 
     sql = """
@@ -77,7 +77,15 @@ app = Dash()
 app.layout = [
     html.Div(children="My Dash App"),
     dcc.RadioItems(
-        options=["Duesseldorf", "Dresden", "Bremen", "Hannover"],
+        options=[
+            "Duesseldorf",
+            "Dresden",
+            "Bremen",
+            "Hannover",
+            "Kiel",
+            "Mainz",
+            "Wiesbaden",
+        ],
         value="Duesseldorf",
         id="controls-and-radio-item",
     ),
