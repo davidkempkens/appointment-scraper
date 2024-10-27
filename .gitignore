@@ -1,11 +1,14 @@
 backup/
 chromedriver.exe
+chromedriver.zip
 sqlite3.exe
 database.db
 database.db-journal
 .idea/
 .vscode/
 *.db
+chromedriver-linux64/
+*.deb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
