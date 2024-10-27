@@ -12,7 +12,7 @@ from datetime import datetime
 
 
 class Browser(webdriver.Chrome):
-    def __init__(self, driver_path="chromedriver.exe", teardown=False):
+    def __init__(self, driver_path="chromedriver.exe", teardown=False, headless=True):
 
         self.driver_path = driver_path
         self.teardown = teardown
@@ -23,6 +23,8 @@ class Browser(webdriver.Chrome):
         chrome_options.add_argument("--log-level=1")
         chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
         chrome_options.add_argument("--search-engine-choice-country")
+        if headless:
+            chrome_options.add_argument("--headless")
 
         super(Browser, self).__init__(options=chrome_options)
 
