@@ -30,7 +30,10 @@ class SlotRepository:
         self.db.commit()
         self.db.close()
 
-    def synchronize_slots(self, online_slots, city, concern):
+    def synchronize_slots(self, online_slots, city, concern, debug=False):
+
+        if debug:
+            self.db.set_trace_callback(print)
 
         # print(f"Syncing slots for {city} with concern {concern}")
 
