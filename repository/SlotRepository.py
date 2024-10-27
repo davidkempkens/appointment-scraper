@@ -24,15 +24,15 @@ class SlotRepository:
             schema = f.read()
             self.cur.executescript(schema)
 
-        self.commit_and_close()
+        self.__commit_and_close()
 
-    def commit_and_close(self):
+    def __commit_and_close(self):
         self.db.commit()
         self.db.close()
 
     def synchronize_slots(self, online_slots, city, concern):
 
-        print(f"Syncing slots for {city} with concern {concern}")
+        # print(f"Syncing slots for {city} with concern {concern}")
 
         # get all slots from Slots WITH THE SAME CITY AND CONCERN
         #  where the Availabilities.slot_id matches the Slots.id
@@ -77,7 +77,7 @@ class SlotRepository:
                 # but only if the slot has the same city and concern
                 # if open_db_slot.city == city and open_db_slot.concern == concern:
                 self.__update_slot_as_taken(open_db_slot.id, datetime.now())
-                print(f"Updated slot as taken: {open_db_slot}")
+                # print(f"Updated slot as taken: {open_db_slot}")
                 updated_slots.append(open_db_slot)
 
         # new online slots that are not in the db
@@ -101,7 +101,7 @@ class SlotRepository:
             newly_available_slots_online_not_in_open_db
         )
 
-        self.commit_and_close()
+        self.__commit_and_close()
 
         return {
             "online": online_slots,
@@ -109,6 +109,63 @@ class SlotRepository:
             "updated": updated_slots,
             "new": newly_inserted_availabilities,
         }
+
+    def print(self, report, city, concern, verbose=False):
+
+        colors = {
+            "header": "\033[95m",
+            "blue": "\033[94m",
+            "green": "\033[92m",
+            "warning": "\033[93m",
+            "fail": "\033[91m",
+            "end": "\033[0m",
+            "bold": "\033[1m",
+            "underline": "\033[4m",
+            None: "",
+        }
+
+        now = datetime.now().strftime("%H:%M")
+
+        log_string = f"{now} "
+        log_string += f"{colors['warning']}{city}{colors['end']} {concern} "
+        log_string += f"{colors['blue']}{len(report['online'])}{colors['end']} = "
+        log_string += f"{colors['header']}{len(report['db'])}{colors['end']} - "
+        log_string += f"{colors['fail']}{len(report['updated'])}{colors['end']} + "
+        log_string += f"{colors['green']}{len(report['new'])}{colors['end']}"
+
+        plausibility = len(report["db"]) - len(report["updated"]) + len(
+            report["new"]
+        ) == len(report["online"])
+
+        if plausibility:
+            log_string += f" {colors['green']}\u2713{colors['end']}"
+        else:
+            log_string += f" {colors['fail']}X{colors['end']}"
+
+        print(log_string)
+
+        if verbose:
+            print(f"Syncing slots for {city} with concern {concern} at {now}")
+
+            print(f"{colors['blue']}Online:")
+            for slot in report["online"]:
+                print(slot)
+
+            print(f"{colors['header']}DB:")
+            for slot in report["db"]:
+                print(slot)
+
+            print(f"{colors['fail']}Updated:")
+            for slot in report["updated"]:
+                print(slot)
+
+            print(f"{colors['green']}New:")
+            for slot in report["new"]:
+                print(slot)
+
+            print(f"{colors['end']}")
+            print(f"Plausibility: {plausibility}")
+            print(log_string)
 
     def __insert_new_slots_to_db(self, newly_available_slots_online):
 
@@ -136,7 +193,7 @@ class SlotRepository:
                     id_for_slot = already_in_db[0][0]
 
             elif not already_in_db:
-                print(f"Slot not in db: {slot}")
+                # print(f"Slot not in db: {slot}")
 
                 id_for_slot = self.cur.execute(
                     """

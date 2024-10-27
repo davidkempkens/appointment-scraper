@@ -29,11 +29,11 @@ DUESSELDORF = {
                 "sub_concerns": {
                     "anmeldung": {
                         "id": "button-plus-3220",
-                        "name": "Anmeldung in Düsseldorf",
+                        "name": "Anmeldung",
                     },
                     "ummeldung": {
                         "id": "button-plus-3157",
-                        "name": "Ummeldung innerhalb Düsseldorf",
+                        "name": "Ummeldung",
                     },
                     "adressaenderung": {
                         "id": "button-plus-2786",
@@ -41,7 +41,7 @@ DUESSELDORF = {
                     },
                     "abmeldung": {
                         "id": "button-plus-3165",
-                        "name": "Abmeldung eines wohnsitzes",
+                        "name": "Abmeldung",
                     },
                 },
             },
@@ -96,7 +96,7 @@ DUESSELDORF = {
 }
 
 
-def duesseldorf():
+def duesseldorf_old():
     duesseldorf = get_open_slots_from_duesseldorf(
         area="einwohnerangelegenheiten",
         concern="ausweise",
@@ -109,8 +109,12 @@ def duesseldorf():
 
 
 def debug(sub_concern="personalausweis_antrag"):
+    duesseldorf(sub_concern)
 
-    # SlotRepository().reset_db()
+
+def duesseldorf(sub_concern="personalausweis_antrag"):
+
+    # SlotRepository(db=sqlite3.connect("db/duesseldorf.db")).reset_db()
     # return
 
     if sub_concern in ["anmeldung", "ummeldung", "adressaenderung", "abmeldung"]:
@@ -133,29 +137,23 @@ def debug(sub_concern="personalausweis_antrag"):
     ]:
         concern = "bescheinigungen"
 
-    # slots_online = get_open_slots_from_duesseldorf(
-    #     area="einwohnerangelegenheiten",
-    #     concern="ausweise",
-    #     sub_concern="personalausweis_antrag",
-    # )
-    slots_online = get_open_slots_from_duesseldorf(
+    online_slots = get_open_slots_from_duesseldorf(
         area="einwohnerangelegenheiten",
         concern=concern,
         sub_concern=sub_concern,
     )
 
-    slot_repo = SlotRepository()
+    concern_name = DUESSELDORF["einwohnerangelegenheiten"]["concerns"][concern][
+        "sub_concerns"
+    ][sub_concern]["name"]
+
+    slot_repo = SlotRepository(db=sqlite3.connect("db/duesseldorf.db"))
     report = slot_repo.synchronize_slots(
-        slots_online, city="Duesseldorf", concern=sub_concern["name"]
+        online_slots=online_slots, city="Duesseldorf", concern=concern_name
     )
 
-    print(f"slots currently found online: {len(slots_online)}")
-    print(f"slots that are found in db as available: {len(report['db'])}")
-    print(f"updated availabilites: {len(report['updated'])}")
-    print(f"newly inserted availabilites: {len(report['new'])}")
-    print(
-        f"Plausibility: {len(report['db']) - len(report['updated']) + len(report['new']) == len(slots_online)}"
-    )
+    # slot_repo.print(report, city="Duesseldorf", concern=concern_name, verbose=True)
+    slot_repo.print(report, city="Duesseldorf", concern=concern_name)
 
 
 def get_open_slots_from_duesseldorf(area, concern, sub_concern) -> list[Slot]:
@@ -180,8 +178,8 @@ def get_open_slots_from_duesseldorf(area, concern, sub_concern) -> list[Slot]:
             browser.click_button_with_id("OKButton")  # OK
 
             # get all offices
-            offices = browser.get_h3_containing_office_names()
-            office_window_handles = browser.open_offices_in_new_tabs(offices)
+            h3_elements = browser.get_h3_containing_office_names()
+            office_window_handles = browser.open_offices_in_new_tabs(h3_elements)
 
             all_open_slots = browser.get_open_slots_from_tabs_for_all_offices(
                 office_window_handles,
@@ -193,4 +191,3 @@ def get_open_slots_from_duesseldorf(area, concern, sub_concern) -> list[Slot]:
         pass
 
     return all_open_slots
-    # return slots.add_concern_to_slots(all_open_slots, sub_concern["name"])

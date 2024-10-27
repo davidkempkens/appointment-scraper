@@ -11,30 +11,81 @@ from cities.wiesbaden import wiesbaden
 from datetime import datetime
 
 
+CONCERNS = {
+    "anmeldung": "Anmeldung",
+    "ummeldung": "Ummeldung",
+    "abmeldung": "Abmeldung",
+    "personalausweis_antrag": "Personalausweis - Antrag",
+    "reisepass_antrag": "Reisepass - Antrag",
+    "meldebescheinigung": "Meldebescheinigung",
+}
+
+CITIES = [
+    "bremen",
+    "dresden",
+    "duesseldorf",
+    "hannover",
+    "kiel",
+    "magdeburg",
+    "mainz",
+    "wiesbaden",
+]
+
+
 def main():
 
-    # try:
-    if len(sys.argv) > 1:
+    try:
+        if len(sys.argv) != 3:
+            print("Usage: python run.py <city> <concern>")
+            print()
+
+            print("Example: python run.py bremen anmeldung")
+            print()
+
+            print("Available cities:")
+            for city in CITIES:
+                print(city)
+
+            print()
+            print("Available concerns:")
+            for concern in CONCERNS:
+                print(concern)
+            return
+
         city = sys.argv[1].lower()
+
+        if city not in CITIES:
+            print(f"City not found: {city}")
+            return
+
         concern = sys.argv[2].lower()
 
-        if city == "debug":
-            debug(concern)
-        # else:
-        # {
-        #     "bremen": bremen,
-        #     "dresden": dresden,
-        #     "duesseldorf": duesseldorf,
-        #     "debug": debug(concern),
-        #     "hannover": hannover,
-        #     "kiel": kiel,
-        #     "magdeburg": magdeburg,
-        #     "mainz": mainz,
-        #     "wiesbaden": wiesbaden,
-        # }.get(city, lambda: print("City not found"))()
+        if concern not in CONCERNS:
+            print(f"Concern not found: {concern}")
+            return
 
-    # except Exception as e:
-    # print(f"An error occurred: {e} at: {datetime.now()}")
+        # print(f"Running {city} for {concern} at: {datetime.now()}")
+        if city == "bremen":
+            bremen(concern)
+        elif city == "dresden":
+            dresden(concern)
+        elif city == "duesseldorf":
+            duesseldorf(concern)
+        elif city == "hannover":
+            hannover(concern)
+        elif city == "kiel":
+            kiel(concern)
+        elif city == "magdeburg":
+            magdeburg(concern)
+        elif city == "mainz":
+            mainz(concern)
+        elif city == "wiesbaden":
+            wiesbaden(concern)
+        else:
+            print(f"City not found: {city}")
+
+    except Exception as e:
+        print(f'An error occurred: {e} at: {datetime.now().strftime("%H:%M")}')
 
     # try again
     # print("Trying again...")
