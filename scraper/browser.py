@@ -6,7 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
 import os
-from slots.slots import Slot as Slot
+from model.Slot import Slot
 from bs4 import BeautifulSoup
 from datetime import datetime
 
@@ -129,7 +129,10 @@ class Browser(webdriver.Chrome):
             return []
 
     def get_open_slots_from_tabs_for_all_offices(
-        self, office_window_handles
+        self,
+        office_window_handles,
+        city=None,
+        concern=None,
     ) -> list[Slot]:
 
         # all open slots for all offices
@@ -141,7 +144,9 @@ class Browser(webdriver.Chrome):
             # switch to the tab with the office
             self.switch_to.window(window)
             # get the open slots for the office as a list of tuples (office, date)
-            open_slots_for_office = self.get_open_slots_for_one_office(office)
+            open_slots_for_office = self.get_open_slots_for_one_office(
+                office, city, concern
+            )
 
             # add the open slots to the list of all open slots
             open_slots.extend(open_slots_for_office)
@@ -152,7 +157,7 @@ class Browser(webdriver.Chrome):
         # return the list of all open slots for all offices
         return open_slots
 
-    def get_open_slots_for_one_office(self, office) -> list[Slot]:
+    def get_open_slots_for_one_office(self, office, city, concern) -> list[Slot]:
 
         open_slots = []
 
@@ -184,10 +189,10 @@ class Browser(webdriver.Chrome):
             )
 
             # build datetime object from the day and the time
-            slot = datetime.strptime(date + " " + time, "%Y%m%d %H:%M")
+            timeslot = datetime.strptime(date + " " + time, "%Y%m%d %H:%M")
 
             # add the office and the date to the list of open slots
-            open_slots.append(Slot(office, slot))
+            open_slots.append(Slot(office, city, timeslot, concern))
 
         # return the list of open slots for this one office
         return open_slots

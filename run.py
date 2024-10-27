@@ -13,27 +13,32 @@ from datetime import datetime
 
 def main():
 
-    try:
-        if len(sys.argv) > 1:
-            city = sys.argv[1].lower()
-            {
-                "bremen": bremen,
-                "dresden": dresden,
-                "duesseldorf": duesseldorf,
-                "debug": debug,
-                "hannover": hannover,
-                "kiel": kiel,
-                "magdeburg": magdeburg,
-                "mainz": mainz,
-                "wiesbaden": wiesbaden,
-            }.get(city, lambda: print("City not found"))()
+    # try:
+    if len(sys.argv) > 1:
+        city = sys.argv[1].lower()
+        concern = sys.argv[2].lower()
 
-    except Exception as e:
-        print(f"An error occurred: {e} at: {datetime.now()}")
+        if city == "debug":
+            debug(concern)
+        # else:
+        # {
+        #     "bremen": bremen,
+        #     "dresden": dresden,
+        #     "duesseldorf": duesseldorf,
+        #     "debug": debug(concern),
+        #     "hannover": hannover,
+        #     "kiel": kiel,
+        #     "magdeburg": magdeburg,
+        #     "mainz": mainz,
+        #     "wiesbaden": wiesbaden,
+        # }.get(city, lambda: print("City not found"))()
 
-        # try again
-        # print("Trying again...")
-        # main()
+    # except Exception as e:
+    # print(f"An error occurred: {e} at: {datetime.now()}")
+
+    # try again
+    # print("Trying again...")
+    # main()
 
 
 if __name__ == "__main__":
