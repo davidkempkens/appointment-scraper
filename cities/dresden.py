@@ -1,6 +1,8 @@
+import sqlite3
 from scraper.browser import Browser
 import slots.slots as slots
 from slots.slots import Slot as Slot
+from repository.SlotRepository import SlotRepository
 import db.database as db
 
 DRESDEN = {
@@ -30,19 +32,61 @@ DRESDEN = {
                         "id": "button-plus-317",
                         "name": "Personalausweis - Antrag",
                     },
+                    "reisepass_antrag": {
+                        "id": "button-plus-315",
+                        "name": "Reisepass - Antrag",
+                    },
                 },
-            }
+            },
+            "bescheinigungen": {
+                "id": "header_concerns_accordion-170",
+                "sub_concerns": {
+                    "anmeldung": {
+                        "id": "button-plus-367",
+                        "name": "Anmeldung",
+                    },
+                    "ummeldung": {
+                        "id": "button-plus-499",
+                        "name": "Ummeldung",
+                    },
+                    "abmeldung": {
+                        "id": "button-plus-391",
+                        "name": "Abmeldung",
+                    },
+                    "meldebescheinigung": {
+                        "id": "button-plus-501",
+                        "name": "Meldebescheinigung",
+                    },
+                },
+            },
         },
     },
 }
 
 
-def dresden():
-    dresden = get_open_slots_from_dresden(
-        concern="personaldokumente", sub_concern="personalausweis_antrag"
+def dresden(sub_concern="personalausweis_antrag"):
+
+    # SlotRepository(db=sqlite3.connect("db/dresden.db")).reset_db()
+    # return
+
+    concern = "personaldokumente"
+
+    if sub_concern in ["anmeldung", "ummeldung", "abmeldung", "meldebescheinigung"]:
+        concern = "bescheinigungen"
+
+    online_slots = get_open_slots_from_dresden(concern=concern, sub_concern=sub_concern)
+
+    concern_name = DRESDEN["buergerbueros"]["concerns"][concern]["sub_concerns"][
+        sub_concern
+    ]["name"]
+
+    slot_repo = SlotRepository(db=sqlite3.connect("db/dresden.db"))
+
+    report = slot_repo.synchronize_slots(
+        online_slots=online_slots, city="Dresden", concern=concern_name
     )
 
-    db.save_slots_per_city(dresden, "Dresden")
+    slot_repo.print(report, city="Dresden", concern=concern_name)
 
 
 def get_open_slots_from_dresden(concern, sub_concern) -> list[Slot]:
@@ -70,9 +114,11 @@ def get_open_slots_from_dresden(concern, sub_concern) -> list[Slot]:
             )
 
             all_open_slots = browser.get_open_slots_from_tabs_for_all_offices(
-                office_window_handles
+                office_window_handles,
+                city="Dresden",
+                concern=sub_concern["name"],
             )
     finally:
         browser.quit()
 
-    return slots.add_concern_to_slots(all_open_slots, sub_concern["name"])
+    return all_open_slots

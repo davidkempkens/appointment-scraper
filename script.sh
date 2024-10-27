@@ -24,10 +24,18 @@ if [ -z "$concern" ]; then
     concern="personalausweis_antrag"
 fi
 
-echo "City: $city"
-echo "Concern: $concern"
+# sleep time in seconds
+sleep_time=60
+
+# run the script
+echo "$city $concern $sleep_time"
 
 while true; do
-    python run.py "$city" "$concern"
-    sleep 60
+    if [ "$city" == "dresden" ]; then
+        python run.py "$city" "$concern" & 
+        sleep 240
+    else
+        python run.py "$city" "$concern"
+    fi
+    sleep $sleep_time
 done
