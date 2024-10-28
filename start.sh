@@ -19,7 +19,7 @@ for i in "${!CONCERNS[@]}"; do
   else
     # Neues Panel für jeden weiteren Befehl
     tmux split-window -t $SESSION
-    tmux select-layout -t $SESSION tiled
+    tmux select-layout -t $SESSION even-vertical
     tmux send-keys -t $SESSION "./script.sh ${CITY} ${CONCERNS[$i]}" C-m
   fi
 done
