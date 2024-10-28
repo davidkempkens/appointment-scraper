@@ -8,6 +8,7 @@ from cities.kiel import kiel
 from cities.magdeburg import magdeburg
 from cities.mainz import mainz
 from cities.wiesbaden import wiesbaden
+from cities.wuppertal import wuppertal
 from datetime import datetime
 
 
@@ -29,7 +30,9 @@ CITIES = [
     "magdeburg",
     "mainz",
     "wiesbaden",
+    "wuppertal",
 ]
+
 
 
 def main():
@@ -81,6 +84,8 @@ def main():
             mainz(concern)
         elif city == "wiesbaden":
             wiesbaden(concern)
+        elif city == "wuppertal":
+            wuppertal(concern)
         else:
             print(f"City not found: {city}")
 
