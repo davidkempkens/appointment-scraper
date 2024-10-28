@@ -89,7 +89,7 @@ def get_open_slots_from_kiel(concern) -> list[Slot]:
     all_open_slots = []
 
     try:
-        with Browser(headless=False) as browser:
+        with Browser() as browser:
             browser.land_first_page(url=KIEL["base_url"])
 
             browser.click_button_with_id("cookie_msg_btn_no")  # Decline Cookies
