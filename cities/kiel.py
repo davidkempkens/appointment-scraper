@@ -1,4 +1,6 @@
+import sqlite3
 from bs4 import BeautifulSoup
+from repository.SlotRepository import SlotRepository
 from scraper.browser import Browser
 import slots.slots as slots
 from slots.slots import Slot as Slot
@@ -18,6 +20,18 @@ KIEL = {
         "personalausweis_antrag": {
             "id": "button-plus-549",
             "name": "Personalausweis - Antrag",
+        },
+        "reisepass_antrag": {
+            "id": "button-plus-563",
+            "name": "Reisepass - Antrag",
+        },
+        "anmeldung": {
+            "id": "button-plus-577",
+            "name": "Anmeldung",
+        },
+        "ummeldung": {
+            "id": "button-plus-591",
+            "name": "Ummeldung",
         },
     },
     "offices": {
@@ -54,25 +68,34 @@ KIEL = {
 }
 
 
-def kiel():
-    kiel = get_open_slots_from_kiel()
+def kiel(concern: str = "personalausweis_antrag"):
 
-    db.save_slots_per_city(kiel, "Kiel")
+    # slot_repository = SlotRepository(db=sqlite3.connect("db/kiel.db")).reset_db()
+    # return
+
+    online_slots = get_open_slots_from_kiel(concern)
+
+    concern_name = KIEL["concerns"][concern]["name"]
+
+    slot_repository = SlotRepository(db=sqlite3.connect("db/kiel.db"))
+    report = slot_repository.synchronize_slots(
+        online_slots, city="Kiel", concern=concern_name
+    )
+
+    slot_repository.print(report, city="Kiel", concern=concern_name)
 
 
-def get_open_slots_from_kiel() -> list[Slot]:
+def get_open_slots_from_kiel(concern) -> list[Slot]:
     all_open_slots = []
 
     try:
-        with Browser() as browser:
+        with Browser(headless=False) as browser:
             browser.land_first_page(url=KIEL["base_url"])
 
             browser.click_button_with_id("cookie_msg_btn_no")  # Decline Cookies
 
-            concern = KIEL["concerns"][
-                "personalausweis_antrag"
-            ]  # Personalausweis - Antrag
-            browser.click_button_with_id(concern["id"])  # Personalausweis - Antrag
+            concern = KIEL["concerns"][concern]
+            browser.click_button_with_id(concern["id"])
 
             browser.click_button_with_id("WeiterButton")  # Weiter
             browser.click_button_with_id("OKButton")  # OK
@@ -98,9 +121,13 @@ def get_open_slots_from_kiel() -> list[Slot]:
 
             for tab in open_tabs_offices:
                 browser.switch_to.window(open_tabs_offices[tab])
-                all_open_slots.extend(browser.get_open_slots_for_one_office(tab))
+                all_open_slots.extend(
+                    browser.get_open_slots_for_one_office(
+                        tab, city="Kiel", concern=concern["name"]
+                    )
+                )
                 # browser.close()
     finally:
         browser.quit()
 
-    return slots.add_concern_to_slots(all_open_slots, "Personalausweis - Antrag")
+    return all_open_slots
