@@ -1,3 +1,5 @@
+import sqlite3
+from repository.SlotRepository import SlotRepository
 from scraper.browser import Browser
 import slots.slots as slots
 from slots.slots import Slot as Slot
@@ -11,11 +13,31 @@ MAGDEBURG = {
             "id": "header_concerns_accordion-22313",
             "name": "Personaldokumente",
         },
+        "meldeangelegenheiten": {
+            "id": "header_concerns_accordion-22309",
+            "name": "Meldeangelegenheiten",
+        },
     },
     "concerns": {
-        "personalausweis": {
+        "personalausweis_antrag": {
             "id": "button-plus-1984",
             "name": "Personalausweis - Antrag",
+        },
+        "reisepass_antrag": {
+            "id": "button-plus-1994",
+            "name": "Reisepass - Antrag",
+        },
+        "anmeldung": {
+            "id": "button-plus-1930",
+            "name": "Anmeldung",
+        },
+        "ummeldung": {
+            "id": "button-plus-1923",
+            "name": "Ummeldung",
+        },
+        "abmeldung": {
+            "id": "button-plus-1939",
+            "name": "Abmeldung",
         },
     },
     "offices": {
@@ -35,17 +57,27 @@ MAGDEBURG = {
 }
 
 
-def magdeburg():
-    magdeburg = get_open_slots_from_magdeburg()
+def magdeburg(concern):
 
-    slots.print_slots(magdeburg)
+    # SlotRepository(db=sqlite3.connect("db/magdeburg.db")).reset_db()
+    # return
 
-    # print(len(magdeburg))
+    online_slots = get_open_slots_from_magdeburg(concern)
 
-    # db.save_slots_per_city(magdeburg, "Magdeburg")
+    slot_repo = SlotRepository(db=sqlite3.connect("db/magdeburg.db"))
+
+    report = slot_repo.synchronize_slots(
+        online_slots=online_slots,
+        city="Magdeburg",
+        concern=MAGDEBURG["concerns"][concern]["name"],
+    )
+
+    slot_repo.print(
+        report, city="Magdeburg", concern=MAGDEBURG["concerns"][concern]["name"]
+    )
 
 
-def get_open_slots_from_magdeburg():
+def get_open_slots_from_magdeburg(concern):
 
     all_open_slots = []
 
@@ -56,9 +88,16 @@ def get_open_slots_from_magdeburg():
 
             browser.click_button_with_id("cookie_msg_btn_no")  # Decline Cookies
 
-            browser.click_button_with_id(MAGDEBURG["area"]["personaldokumente"]["id"])
+            if concern in ["personalausweis_antrag", "reisepass_antrag"]:
+                browser.click_button_with_id(
+                    MAGDEBURG["area"]["personaldokumente"]["id"]
+                )
+            else:
+                browser.click_button_with_id(
+                    MAGDEBURG["area"]["meldeangelegenheiten"]["id"]
+                )
 
-            browser.click_button_with_id(MAGDEBURG["concerns"]["personalausweis"]["id"])
+            browser.click_button_with_id(MAGDEBURG["concerns"][concern]["id"])
 
             browser.click_button_with_id("WeiterButton")  # Weiter
             browser.click_button_with_id("OKButton")  # OK
@@ -68,7 +107,10 @@ def get_open_slots_from_magdeburg():
             )
             tabs = browser.open_offices_in_new_tabs(office_elements)
 
-            all_open_slots = browser.get_open_slots_from_tabs_for_all_offices(tabs)
+            all_open_slots = browser.get_open_slots_from_tabs_for_all_offices(
+                tabs, city="Magdeburg", concern=MAGDEBURG["concerns"][concern]["name"]
+            )
     finally:
         browser.quit()
+        pass
     return all_open_slots
