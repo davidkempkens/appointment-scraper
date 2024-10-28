@@ -33,6 +33,17 @@ CITIES = [
     "wuppertal",
 ]
 
+colors = {
+    "header": "\033[95m",
+    "blue": "\033[94m",
+    "green": "\033[92m",
+    "warning": "\033[93m",
+    "fail": "\033[91m",
+    "end": "\033[0m",
+    "bold": "\033[1m",
+    "underline": "\033[4m",
+    None: "",
+}
 
 
 def main():
@@ -90,7 +101,11 @@ def main():
             print(f"City not found: {city}")
 
     except Exception as e:
-        print(f'An error occurred: {e} at: {datetime.now().strftime("%H:%M")}')
+
+        print(
+            f'{colors["fail"]}{datetime.now().strftime("%H:%M")} Error {e}{colors["end"]}'
+        )
+        raise e
 
     # try again
     # print("Trying again...")
