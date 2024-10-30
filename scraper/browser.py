@@ -159,7 +159,7 @@ class Browser(webdriver.Chrome):
         # return the list of all open slots for all offices
         return open_slots
 
-    def get_open_slots_for_one_office(self, office, city, concern) -> list[Slot]:
+    def get_open_slots_for_one_office_old(self, office, city, concern) -> list[Slot]:
 
         open_slots = []
 
@@ -197,6 +197,43 @@ class Browser(webdriver.Chrome):
             open_slots.append(Slot(office, city, timeslot, concern))
 
         # return the list of open slots for this one office
+        return open_slots
+
+    def get_open_slots_for_one_office(self, office, city, concern) -> list[Slot]:
+
+        open_slots = []
+
+        # Get the page source and parse it with BeautifulSoup
+        soup = BeautifulSoup(self.page_source, "html.parser")
+
+        # Find all buttons with the class "suggest_btn"
+        buttons = soup.find_all("button", class_="suggest_btn")
+
+        if not buttons:
+            return open_slots
+
+        for button in buttons:
+
+            # The button is disabled if the slot is already taken
+            if button.has_attr("disabled"):
+                continue
+
+            # The title of the button is the time of the slot in the format "HH:MM"
+            time = button.get("title")
+
+            # Find the hidden input element with the name "date" in the parent form
+
+            date = (
+                button.find_parent("form").find("input", {"name": "date"}).get("value")
+            )
+
+            # Build datetime object from the day and the time
+            timeslot = datetime.strptime(date + " " + time, "%Y%m%d %H:%M")
+
+            # Add the office and the date to the list of open slots
+            open_slots.append(Slot(office, city, timeslot, concern))
+
+        # Return the list of open slots for this one office
         return open_slots
 
     def get_open_slots_from_element(self, element) -> list[Slot]:
