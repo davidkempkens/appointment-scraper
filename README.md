@@ -12,11 +12,14 @@ conda activate scraping
 Create a virtual environment and activate it.
 
 Windows:
+
 ```bash
 python -m venv venv
 source venv/Scripts/activate
 ```
+
 Linux:
+
 ```bash
 # on some systems you need to install python3.10-venv
 apt install python3.10-venv
@@ -70,7 +73,9 @@ chromedriver --version
 
 
 curl -o chromedriver.zip https://storage.googleapis.com/chrome-for-testing-public/129.0.6668.100/linux64/chromedriver-linux64.zip
+curl -o chromedriver.zip https://storage.googleapis.com/chrome-for-testing-public/130.0.6723.91/linux64/chromedriver-linux64.zip
 unzip chromedriver.zip
+```
 
 ## Initialize Databases
 
