@@ -147,10 +147,10 @@ class SlotRepository:
             report["new"]
         ) == len(report["online"])
 
-        if plausibility:
-            log_string += f" {colors['green']}\u2713{colors['end']}"
-        else:
+        if not plausibility:
             log_string += f" {colors['fail']}X{colors['end']}"
+        # else:
+            # log_string += f" {colors['green']}\u2713{colors['end']}"
 
         print(log_string)
 
