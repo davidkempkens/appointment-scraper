@@ -111,6 +111,9 @@ def duesseldorf_old():
 def debug(sub_concern="personalausweis_antrag"):
     duesseldorf(sub_concern)
 
+def init(cities):
+    SlotRepository().initCities(cities)
+
 
 def duesseldorf(sub_concern="personalausweis_antrag"):
 

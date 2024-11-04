@@ -10,7 +10,13 @@ class SlotRepository:
         self.cur = db.cursor()
         self.cur.execute("PRAGMA foreign_keys = ON;")
 
-    def reset_db(self):
+    def initCities(self, cities):
+        for city in cities:
+            print(f"Initializing city: {city}")
+            self.db = sqlite3.connect(f"db/{city}.db")
+            self.reset_db(keep_connection=True)
+
+    def reset_db(self, keep_connection=False):
 
         # print sql commands
         self.db.set_trace_callback(print)
@@ -24,7 +30,8 @@ class SlotRepository:
             schema = f.read()
             self.cur.executescript(schema)
 
-        self.__commit_and_close()
+        if not keep_connection:
+            self.__commit_and_close()
 
     def __commit_and_close(self):
         self.db.commit()

@@ -3,6 +3,7 @@ from cities.bremen import bremen
 from cities.dresden import dresden
 from cities.duesseldorf import duesseldorf
 from cities.duesseldorf import debug
+from cities.duesseldorf import init
 from cities.hannover import hannover
 from cities.kiel import kiel
 from cities.magdeburg import magdeburg
@@ -49,6 +50,10 @@ colors = {
 def main():
 
     try:
+
+        if len(sys.argv) == 2 and sys.argv[1] == "init":
+            init(cities=CITIES)
+            return
         if len(sys.argv) != 3:
             print("Usage: python run.py <city> <concern>")
             print()

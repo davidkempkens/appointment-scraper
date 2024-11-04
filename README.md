@@ -71,7 +71,12 @@ chromedriver --version
 
 curl -o chromedriver.zip https://storage.googleapis.com/chrome-for-testing-public/129.0.6668.100/linux64/chromedriver-linux64.zip
 unzip chromedriver.zip
-```	
+
+## Initialize Databases
+
+```bash
+python run.py init
+```
 
 ## Run Main Script for each city
 
