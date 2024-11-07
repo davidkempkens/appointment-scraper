@@ -112,7 +112,10 @@ def debug(sub_concern="personalausweis_antrag"):
     duesseldorf(sub_concern)
 
 def init(cities):
-    SlotRepository().initCities(cities)
+
+    for city in cities:
+        repo = SlotRepository(db=sqlite3.connect(f"db/{city}.db"))
+        repo.reset_db()
 
 
 def duesseldorf(sub_concern="personalausweis_antrag"):

@@ -14,7 +14,7 @@ class SlotRepository:
         for city in cities:
             print(f"Initializing city: {city}")
             self.db = sqlite3.connect(f"db/{city}.db")
-            self.reset_db(keep_connection=True)
+            self.reset_db()
 
     def reset_db(self, keep_connection=False):
 
@@ -22,8 +22,8 @@ class SlotRepository:
         self.db.set_trace_callback(print)
 
         # drop tables
-        self.cur.execute("DROP TABLE IF EXISTS Availabilities;")
-        self.cur.execute("DROP TABLE IF EXISTS Slots;")
+        # self.cur.execute("DROP TABLE IF EXISTS Availabilities;")
+        # self.cur.execute("DROP TABLE IF EXISTS Slots;")
 
         # create tables
         with open("schema.sql") as f:
