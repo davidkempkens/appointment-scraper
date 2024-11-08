@@ -11,18 +11,22 @@ CONCERNS=("anmeldung" "ummeldung" "abmeldung" "personalausweis_antrag" "reisepas
 
 tmux new-session -d -s $SESSION
 
-
-for i in "${!CONCERNS[@]}"; do
-  if [ "$i" -eq 0 ]; then
-    # Erster Befehl in der initialen tmux-Fenster
-    tmux send-keys -t $SESSION "./script.sh ${CITY} ${CONCERNS[$i]}" C-m
-  else
-    # Neues Panel für jeden weiteren Befehl
-    tmux split-window -t $SESSION
-    tmux select-layout -t $SESSION even-vertical
-    tmux send-keys -t $SESSION "./script.sh ${CITY} ${CONCERNS[$i]}" C-m
-  fi
-done
+if [ $SESSION = "dash" ]; then
+  tmux send-keys -t $SESSION "source venv/bin/activate" C-m
+  tmux send-keys -t $SESSION "python app_v2.py" C-m
+else
+  for i in "${!CONCERNS[@]}"; do
+    if [ "$i" -eq 0 ]; then
+      # Erster Befehl in der initialen tmux-Fenster
+      tmux send-keys -t $SESSION "./script.sh ${CITY} ${CONCERNS[$i]}" C-m
+    else
+      # Neues Panel für jeden weiteren Befehl
+      tmux split-window -t $SESSION
+      tmux select-layout -t $SESSION even-vertical
+      tmux send-keys -t $SESSION "./script.sh ${CITY} ${CONCERNS[$i]}" C-m
+    fi
+  done
+fi
 
 # Sitzung anhängen
 tmux attach -t $SESSION
