@@ -7,5 +7,6 @@ fi
 
 echo "Backup at $(date +%Y-%m-%d_%H-%M-%S)"
 
-# copy the database to the backup folder
-cp db/database.db db/backup/database_$(date +%Y-%m-%d_%H-%M-%S).db
+cp db/duesseldorf.db db/backup/duesseldorf_$(date +%Y-%m-%d_%H-%M-%S).db
+cp db/dresden.db db/backup/dresden_$(date +%Y-%m-%d_%H-%M-%S).db
+cp db/kiel.db db/backup/kiel_$(date +%Y-%m-%d_%H-%M-%S).db
