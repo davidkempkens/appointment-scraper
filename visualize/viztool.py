@@ -6,6 +6,8 @@ import sqlite3
 
 def retrieveSlotData(city: str, concern: str | None, office: str | None = None):
 
+    city = city.lower()
+
     conn = sqlite3.connect(f"db/{city}.db")
 
     sql = """
@@ -200,7 +202,7 @@ def plot_mean_total_delta_per_weekday(
     weekday_order = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag"]
 
     # Wochentage in der DataFrame zu deutschen Wochentagen umbenennen
-    mean_delta_per_weekday.index = mean_delta_per_weekday.index.map(
+    mean_total_delta_per_weekday.index = mean_total_delta_per_weekday.index.map(
         {
             "Monday": "Montag",
             "Tuesday": "Dienstag",
@@ -211,10 +213,10 @@ def plot_mean_total_delta_per_weekday(
     )
 
     # Stellen Sie sicher, dass die Wochentage in der richtigen Reihenfolge sind
-    mean_delta_per_weekday = mean_delta_per_weekday.reindex(weekday_order)
+    mean_total_delta_per_weekday = mean_total_delta_per_weekday.reindex(weekday_order)
 
     # Daten plotten
-    mean_delta_per_weekday.plot(
+    mean_total_delta_per_weekday.plot(
         kind="bar",
         title="Durchschnittliche Zeit, die ein Termin 'buchbar' ist abhängig vom Wochentag, an dem der Termin stattfindet",
         ylabel="Stunden",
@@ -238,7 +240,7 @@ def plot_mean_total_delta_per_hour(
         title="Durchschnittliche Zeit, die ein Termin 'buchbar' ist abhängig von der Stunde, zu der der Termin stattfindet",
         ylabel="Stunden",
         xlabel="Stunde",
-        rot=45,
+        rot=0,
     )
 
     plt.show()
