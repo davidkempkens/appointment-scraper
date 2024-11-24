@@ -4,7 +4,12 @@ import pandas as pd
 import sqlite3
 
 
-def retrieveSlotData(city: str, concern: str | None, office: str | None = None):
+def retrieveSlotData(
+    city: str,
+    concern: str | None,
+    office: str | None = None,
+    exclude_office: str | None = None,
+):
 
     city = city.lower()
 
@@ -33,6 +38,9 @@ def retrieveSlotData(city: str, concern: str | None, office: str | None = None):
 
     if office:
         df = df[df["office"] == office]
+
+    if exclude_office:
+        df = df[df["office"] != exclude_office]
 
     return preprocess_dataframe(df)
 
@@ -68,8 +76,13 @@ def preprocess_dataframe(df):
     return df
 
 
-def count_per_timestamp(city: str, concern: str | None, office: str | None = None):
-    df = retrieveSlotData(city, concern, office)
+def count_per_timestamp(
+    city: str,
+    concern: str | None,
+    office: str | None = None,
+    exclude_office: str | None = None,
+):
+    df = retrieveSlotData(city, concern, office, exclude_office)
     # get all unique timestamps from available and taken
     timestamps = pd.concat([df["available"], df["taken"]]).sort_values().unique()
     count = pd.Series(dtype=int)
@@ -83,8 +96,13 @@ def count_per_timestamp(city: str, concern: str | None, office: str | None = Non
     return pd.DataFrame({"timestamp": timestamps, "count": count})
 
 
-def plot_count_per_timestamp(city: str, concern: str | None, office: str | None = None):
-    count_df = count_per_timestamp(city, concern, office)
+def plot_count_per_timestamp(
+    city: str,
+    concern: str | None,
+    office: str | None = None,
+    exclude_office: str | None = None,
+):
+    count_df = count_per_timestamp(city, concern, office, exclude_office)
 
     count_df.plot(
         x="timestamp",
@@ -102,9 +120,12 @@ def plot_count_per_timestamp(city: str, concern: str | None, office: str | None 
 
 
 def calc_time_until_next_slots(
-    city: str, concern: str | None, office: str | None = None
+    city: str,
+    concern: str | None,
+    office: str | None = None,
+    exclude_office: str | None = None,
 ):
-    df = retrieveSlotData(city, concern, office)
+    df = retrieveSlotData(city, concern, office, exclude_office)
     # print(df.shape)
     # return df
     time_until_slot = df.groupby(by="available").agg(
@@ -130,9 +151,13 @@ def calc_time_until_next_slots(
 
 
 def plot_time_until_next_slots(
-    city: str, concern: str | None, office: str | None = None, window: str = "4h"
+    city: str,
+    concern: str | None,
+    office: str | None = None,
+    window: str = "4h",
+    exclude_office: str | None = None,
 ):
-    time_until_slot = calc_time_until_next_slots(city, concern, office)
+    time_until_slot = calc_time_until_next_slots(city, concern, office, exclude_office)
 
     time_until_slot = time_until_slot.resample("min").ffill()
 
@@ -172,8 +197,13 @@ def plot_time_until_next_slots(
     plt.show()
 
 
-def group_by_slot_id(city: str, concern: str | None, office: str | None = None):
-    df = retrieveSlotData(city, concern, office)
+def group_by_slot_id(
+    city: str,
+    concern: str | None,
+    office: str | None = None,
+    exclude_office: str | None = None,
+):
+    df = retrieveSlotData(city, concern, office, exclude_office)
     slots = df.groupby("s_id")[
         [
             "office",
@@ -189,9 +219,12 @@ def group_by_slot_id(city: str, concern: str | None, office: str | None = None):
 
 
 def plot_mean_total_delta_per_weekday(
-    city: str, concern: str | None, office: str | None = None
+    city: str,
+    concern: str | None,
+    office: str | None = None,
+    exclude_office: str | None = None,
 ):
-    slots = group_by_slot_id(city, concern, office)
+    slots = group_by_slot_id(city, concern, office, exclude_office)
     mean_total_delta_per_weekday = slots.groupby("weekday")["total_delta"].mean()
 
     mean_total_delta_per_weekday = (
@@ -228,9 +261,12 @@ def plot_mean_total_delta_per_weekday(
 
 
 def plot_mean_total_delta_per_hour(
-    city: str, concern: str | None, office: str | None = None
+    city: str,
+    concern: str | None,
+    office: str | None = None,
+    exclude_office: str | None = None,
 ):
-    slots = group_by_slot_id(city, concern, office)
+    slots = group_by_slot_id(city, concern, office, exclude_office)
     mean_total_delta_per_hour = slots.groupby("hour")["total_delta"].mean()
     mean_total_delta_per_hour = mean_total_delta_per_hour.dt.total_seconds() / 3600
 
