@@ -96,6 +96,8 @@ def plot_count_per_timestamp(city: str, concern: str | None, office: str | None 
         legend=False,
     )
 
+    plt.show()
+
 
 def calc_time_until_next_slots(
     city: str, concern: str | None, office: str | None = None
@@ -164,5 +166,79 @@ def plot_time_until_next_slots(
     ax.set_xlabel("Zeitpunkt der Abfrage")
     ax.set_ylabel("Zeit bis zum nächsten Termin in Tagen")
     ax.legend()
+
+    plt.show()
+
+
+def group_by_slot_id(city: str, concern: str | None, office: str | None = None):
+    df = retrieveSlotData(city, concern, office)
+    slots = df.groupby("s_id")[
+        [
+            "office",
+            "city",
+            "concern",
+            "hour",
+            "weekday",
+            "total_delta",
+            "count_availabilities",
+        ]
+    ].first()
+    return slots
+
+
+def plot_mean_total_delta_per_weekday(
+    city: str, concern: str | None, office: str | None = None
+):
+    slots = group_by_slot_id(city, concern, office)
+    mean_total_delta_per_weekday = slots.groupby("weekday")["total_delta"].mean()
+
+    mean_total_delta_per_weekday = (
+        mean_total_delta_per_weekday.dt.total_seconds() / 3600
+    )
+
+    # Definieren Sie die richtige Reihenfolge der Wochentage
+    weekday_order = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag"]
+
+    # Wochentage in der DataFrame zu deutschen Wochentagen umbenennen
+    mean_delta_per_weekday.index = mean_delta_per_weekday.index.map(
+        {
+            "Monday": "Montag",
+            "Tuesday": "Dienstag",
+            "Wednesday": "Mittwoch",
+            "Thursday": "Donnerstag",
+            "Friday": "Freitag",
+        }
+    )
+
+    # Stellen Sie sicher, dass die Wochentage in der richtigen Reihenfolge sind
+    mean_delta_per_weekday = mean_delta_per_weekday.reindex(weekday_order)
+
+    # Daten plotten
+    mean_delta_per_weekday.plot(
+        kind="bar",
+        title="Durchschnittliche Zeit, die ein Termin 'buchbar' ist abhängig vom Wochentag, an dem der Termin stattfindet",
+        ylabel="Stunden",
+        xlabel="Wochentag",
+        rot=45,
+    )
+
+    plt.show()
+
+
+def plot_mean_total_delta_per_hour(
+    city: str, concern: str | None, office: str | None = None
+):
+    slots = group_by_slot_id(city, concern, office)
+    mean_total_delta_per_hour = slots.groupby("hour")["total_delta"].mean()
+    mean_total_delta_per_hour = mean_total_delta_per_hour.dt.total_seconds() / 3600
+
+    # Daten plotten
+    mean_total_delta_per_hour.plot(
+        kind="bar",
+        title="Durchschnittliche Zeit, die ein Termin 'buchbar' ist abhängig von der Stunde, zu der der Termin stattfindet",
+        ylabel="Stunden",
+        xlabel="Stunde",
+        rot=45,
+    )
 
     plt.show()
