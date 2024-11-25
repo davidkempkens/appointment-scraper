@@ -108,9 +108,9 @@ def main():
     except Exception as e:
 
         print(
-            f'{colors["fail"]}{datetime.now().strftime("%H:%M")} Error {e}{colors["end"]}'
+            f'{colors["fail"]}{datetime.now().strftime("%H:%M")} Error {type(e).__name__}{colors["end"]}'
         )
-        raise e
+        # raise e
 
     # try again
     # print("Trying again...")
