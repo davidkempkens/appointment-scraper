@@ -2,6 +2,7 @@ from matplotlib import pyplot as plt
 import matplotlib.dates as mdates
 import pandas as pd
 import sqlite3
+import repository.SlotRepository as repo
 
 
 def retrieveSlotData(
@@ -10,6 +11,11 @@ def retrieveSlotData(
     office: str | None = None,
     exclude_office: str | None = None,
 ):
+
+    slot_repo = repo.SlotRepository(db=sqlite3.connect(f"db/{city}.db"))
+    return slot_repo.get_all(
+        city=city, concern=concern, office=office, exclude_office=exclude_office
+    )
 
     city = city.lower()
 
@@ -81,7 +87,17 @@ def count_per_timestamp(
     concern: str | None,
     office: str | None = None,
     exclude_office: str | None = None,
+    from_csv: bool = False,
 ):
+
+    return repo.SlotRepository(db=sqlite3.connect(f"db/{city}.db")).count_per_timestamp(
+        city=city,
+        concern=concern,
+        office=office,
+        exclude_office=exclude_office,
+        from_csv=from_csv,
+    )
+
     df = retrieveSlotData(city, concern, office, exclude_office)
     # get all unique timestamps from available and taken
     timestamps = pd.concat([df["available"], df["taken"]]).sort_values().unique()
@@ -93,7 +109,13 @@ def count_per_timestamp(
             & ((df["taken"] >= timestamp) | (df["taken"].isnull()))
         ].shape[0]
         count.at[timestamp] = count_per_timestamp
-    return pd.DataFrame({"timestamp": timestamps, "count": count})
+
+    count_per_timestamp = pd.DataFrame({"timestamp": timestamps, "count": count})
+
+    # save as csv
+    count_per_timestamp.to_csv("count_per_timestamp.csv")
+
+    return count_per_timestamp
 
 
 def plot_count_per_timestamp(
@@ -101,20 +123,29 @@ def plot_count_per_timestamp(
     concern: str | None,
     office: str | None = None,
     exclude_office: str | None = None,
+    from_csv: bool = False,
 ):
-    count_df = count_per_timestamp(city, concern, office, exclude_office)
+    count_df = count_per_timestamp(city, concern, office, exclude_office, from_csv)
 
     count_df.plot(
         x="timestamp",
         y="count",
         kind="line",
         figsize=(20, 10),
-        grid=True,
+        # grid=True,
         title="Verfügbare Termine über die Zeit",
         xlabel="Zeit",
         ylabel="Anzahl verfügbarer Termine",
         legend=False,
     )
+
+    # plot vertical line for each day at 7:00
+    for i in range(1, 10):
+        plt.axvline(
+            x=count_df["timestamp"].iloc[0] + pd.Timedelta(days=i, hours=9),
+            color="red",
+            linestyle="--",
+        )
 
     plt.show()
 

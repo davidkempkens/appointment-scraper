@@ -1,6 +1,6 @@
 from datetime import datetime
 import sqlite3
-
+import pandas as pd
 from model.Slot import Slot
 
 
@@ -36,6 +36,111 @@ class SlotRepository:
     def __commit_and_close(self):
         self.db.commit()
         self.db.close()
+
+    def get_all(
+        self,
+        city: str,
+        concern: str | None,
+        office: str | None = None,
+        exclude_office: str | None = None,
+    ):
+
+        city = city.lower()
+
+        # db = sqlite3.connect(f"db/{city}.db")
+
+        sql = """
+        SELECT 
+            Availabilities.slot_id as s_id,
+            Slots.office as office,
+            Slots.city as city,
+            Slots.timeslot as timeslot,
+            Slots.concern as concern,
+            Availabilities.id as a_id,
+            Availabilities.available as available,
+            Availabilities.taken as taken
+        FROM Slots
+        JOIN Availabilities ON Slots.id = Availabilities.slot_id;
+        """
+
+        df = pd.read_sql_query(
+            sql, self.db, parse_dates=["available", "taken", "timeslot"]
+        )
+
+        # db.close()
+
+        if concern:
+            df = df[df["concern"] == concern]
+
+        if office:
+            df = df[df["office"] == office]
+
+        if exclude_office:
+            df = df[df["office"] != exclude_office]
+
+        return self.preprocess_dataframe(df)
+
+    def preprocess_dataframe(self, df):
+
+        # add count of availabilities per s_id
+        df["count_availabilities"] = df.groupby("s_id")["a_id"].transform("count")
+
+        # lose precision to only minutes
+        df["timeslot"] = df["timeslot"].dt.floor("min")
+        df["available"] = df["available"].dt.floor("min")
+        df["taken"] = df["taken"].dt.floor("min")
+
+        # add weekday
+        df["weekday"] = df["timeslot"].dt.day_name()
+
+        # add hour
+        df["hour"] = df["timeslot"].dt.hour
+
+        # timedelta between available and taken
+        df["delta"] = df["taken"] - df["available"]
+
+        # time until slot
+        df["time_until_slot"] = df["timeslot"] - df["taken"]
+
+        # add total delta per s_id
+        df["total_delta"] = df.groupby("s_id")["delta"].transform("sum")
+
+        # sort by total delta
+        df = df.sort_values("s_id", ascending=True)
+
+        return df
+
+    def save_count_per_timestamp(self, city: str, concern: str | None):
+        self.count_per_timestamp(city, concern).to_csv(f"db/count_{city}_{concern}.csv")
+
+    def count_per_timestamp(
+        self,
+        city: str,
+        concern: str | None,
+        office: str | None = None,
+        exclude_office: str | None = None,
+        from_csv: bool = False,
+    ):
+        if from_csv:
+            return pd.read_csv(
+                f"db/count_{city}_{concern}.csv", parse_dates=["timestamp"]
+            )
+
+        df = self.get_all(city, concern, office, exclude_office)
+        # get all unique timestamps from available and taken
+        timestamps = pd.concat([df["available"], df["taken"]]).sort_values().unique()
+        count = pd.Series(dtype=int)
+        for timestamp in timestamps:
+            # count slots for each timestamp
+            count_per_timestamp = df[
+                (df["available"] <= timestamp)
+                & ((df["taken"] >= timestamp) | (df["taken"].isnull()))
+            ].shape[0]
+            count.at[timestamp] = count_per_timestamp
+
+        count_per_timestamp = pd.DataFrame({"timestamp": timestamps, "count": count})
+
+        return count_per_timestamp
 
     def synchronize_slots(self, online_slots, city, concern, debug=False):
 
@@ -111,6 +216,8 @@ class SlotRepository:
             newly_available_slots_online_not_in_open_db
         )
 
+        self.save_count_per_timestamp(city, concern)
+
         self.__commit_and_close()
 
         return {
@@ -150,7 +257,7 @@ class SlotRepository:
         if not plausibility:
             log_string += f" {colors['fail']}X{colors['end']}"
         # else:
-            # log_string += f" {colors['green']}\u2713{colors['end']}"
+        # log_string += f" {colors['green']}\u2713{colors['end']}"
 
         print(log_string)
 
