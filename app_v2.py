@@ -39,7 +39,7 @@ def count_open_slots_over_time(city, concern="Personalausweis - Antrag"):
     )
 
     first_timestamp = open["timestamp"].min().strftime("%d.%m.")
-    last_timestamp = open["timestamp"].max().strftime("%d.%m.")
+    last_timestamp = open["timestamp"].max().strftime("%d.%m. %H:%M")
 
     return px.line(
         open,
