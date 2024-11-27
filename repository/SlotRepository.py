@@ -37,6 +37,18 @@ class SlotRepository:
         self.db.commit()
         self.db.close()
 
+    def get_offices(self, city: str, debug=False):
+        if debug:
+            self.db.set_trace_callback(print)
+
+        tuples = self.cur.execute(
+            "SELECT DISTINCT office FROM Slots WHERE LOWER(city)=?", (city,)
+        ).fetchall()
+
+        offices = [t[0] for t in tuples]
+
+        return offices
+
     def get_all(
         self,
         city: str,
@@ -109,6 +121,25 @@ class SlotRepository:
         df = df.sort_values("s_id", ascending=True)
 
         return df
+
+    def mean_count_over_time(
+        self,
+        city: str,
+        concern: str | None,
+        office: str | None = None,
+        exclude_office: str | None = None,
+        from_csv: bool = False,
+    ):
+        mean_per_office = pd.Series(dtype=float)
+
+        for office in self.get_offices(city=city):
+            mean = self.count_per_timestamp(
+                city=city, concern=concern, office=office, exclude_office=exclude_office
+            ).mean()["count"]
+
+            mean_per_office[office] = mean
+
+        return mean_per_office.sort_values(ascending=False)
 
     def save_count_per_timestamp(self, city: str, concern: str | None):
         self.count_per_timestamp(city, concern).to_csv(f"db/count_{city}_{concern}.csv")

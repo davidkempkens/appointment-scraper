@@ -17,69 +17,29 @@ def retrieveSlotData(
         city=city, concern=concern, office=office, exclude_office=exclude_office
     )
 
-    city = city.lower()
 
-    conn = sqlite3.connect(f"db/{city}.db")
-
-    sql = """
-    SELECT 
-        Availabilities.slot_id as s_id,
-        Slots.office as office,
-        Slots.city as city,
-        Slots.timeslot as timeslot,
-        Slots.concern as concern,
-        Availabilities.id as a_id,
-        Availabilities.available as available,
-        Availabilities.taken as taken
-    FROM Slots
-    JOIN Availabilities ON Slots.id = Availabilities.slot_id;
-    """
-
-    df = pd.read_sql_query(sql, conn, parse_dates=["available", "taken", "timeslot"])
-
-    conn.close()
-
-    if concern:
-        df = df[df["concern"] == concern]
-
-    if office:
-        df = df[df["office"] == office]
-
-    if exclude_office:
-        df = df[df["office"] != exclude_office]
-
-    return preprocess_dataframe(df)
+def get_offices(city: str):
+    return repo.SlotRepository(db=sqlite3.connect(f"db/{city}.db")).get_offices(
+        city=city
+    )
 
 
-def preprocess_dataframe(df):
-
-    # add count of availabilities per s_id
-    df["count_availabilities"] = df.groupby("s_id")["a_id"].transform("count")
-
-    # lose precision to only minutes
-    df["timeslot"] = df["timeslot"].dt.floor("min")
-    df["available"] = df["available"].dt.floor("min")
-    df["taken"] = df["taken"].dt.floor("min")
-
-    # add weekday
-    df["weekday"] = df["timeslot"].dt.day_name()
-
-    # add hour
-    df["hour"] = df["timeslot"].dt.hour
-
-    # timedelta between available and taken
-    df["delta"] = df["taken"] - df["available"]
-
-    # time until slot
-    df["time_until_slot"] = df["timeslot"] - df["taken"]
-
-    # add total delta per s_id
-    df["total_delta"] = df.groupby("s_id")["delta"].transform("sum")
-
-    # sort by total delta
-    df = df.sort_values("s_id", ascending=True)
-
-    return df
+def mean_count_over_time(
+    city: str,
+    concern: str | None,
+    office: str | None = None,
+    exclude_office: str | None = None,
+    from_csv: bool = False,
+):
+    return repo.SlotRepository(
+        db=sqlite3.connect(f"db/{city}.db")
+    ).mean_count_over_time(
+        city=city,
+        concern=concern,
+        office=office,
+        exclude_office=exclude_office,
+        from_csv=from_csv,
+    )
 
 
 def count_per_timestamp(
@@ -97,25 +57,6 @@ def count_per_timestamp(
         exclude_office=exclude_office,
         from_csv=from_csv,
     )
-
-    df = retrieveSlotData(city, concern, office, exclude_office)
-    # get all unique timestamps from available and taken
-    timestamps = pd.concat([df["available"], df["taken"]]).sort_values().unique()
-    count = pd.Series(dtype=int)
-    for timestamp in timestamps:
-        # count slots for each timestamp
-        count_per_timestamp = df[
-            (df["available"] <= timestamp)
-            & ((df["taken"] >= timestamp) | (df["taken"].isnull()))
-        ].shape[0]
-        count.at[timestamp] = count_per_timestamp
-
-    count_per_timestamp = pd.DataFrame({"timestamp": timestamps, "count": count})
-
-    # save as csv
-    count_per_timestamp.to_csv("count_per_timestamp.csv")
-
-    return count_per_timestamp
 
 
 def plot_count_per_timestamp(
@@ -239,6 +180,7 @@ def group_by_slot_id(
         [
             "office",
             "city",
+            "timeslot",
             "concern",
             "hour",
             "weekday",
@@ -308,6 +250,29 @@ def plot_mean_total_delta_per_hour(
         ylabel="Stunden",
         xlabel="Stunde",
         rot=0,
+    )
+
+    plt.show()
+
+
+def plot_mean_total_per_office(
+    city: str,
+    concern: str | None,
+    office: str | None = None,
+    exclude_office: str | None = None,
+):
+    slots = group_by_slot_id(city, concern, office, exclude_office)
+    mean_total_delta_per_office = slots.groupby("office")["total_delta"].mean()
+    mean_total_delta_per_office = mean_total_delta_per_office.dt.total_seconds() / 3600
+
+    # Daten plotten
+    mean_total_delta_per_office.plot(
+        kind="bar",
+        title="Durchschnittliche Zeit, die ein Termin 'buchbar' ist abhängig vom Bürgerbüro, in dem der Termin stattfindet",
+        ylabel="Stunden",
+        xlabel="Stunde",
+        figsize=(20, 10),
+        rot=45,
     )
 
     plt.show()
