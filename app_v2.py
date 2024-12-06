@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px
 import sqlite3
 import repository.SlotRepository as repository
+from visualize import viztool
 
 
 def fetch_slots_from_db(
@@ -11,9 +12,18 @@ def fetch_slots_from_db(
     office: str | None = None,
     exclude_office: str | None = None,
 ):
-    return repository.SlotRepository(
-        db=sqlite3.connect(f"db/{city.lower()}.db")
-    ).get_all(city=city, concern=concern, office=office, exclude_office=exclude_office)
+    df = viztool.read_data_from_csv()
+
+    if city:
+        df = df[df["city"] == city]
+    if concern:
+        df = df[df["concern"] == concern]
+    if office:
+        df = df[df["office"] == office]
+    if exclude_office:
+        df = df[df["office"] != exclude_office]
+
+    return df
 
 
 def get_open_slots(city: str, concern: str | None = "Personalausweis - Antrag"):
@@ -28,14 +38,23 @@ def get_open_slots(city: str, concern: str | None = "Personalausweis - Antrag"):
     Output(component_id="controls-and-line-graph", component_property="figure"),
     Input(component_id="controls-and-radio-item", component_property="value"),
     Input(component_id="controls-and-radio-concern", component_property="value"),
+    Input(component_id="controls-and-radio-office", component_property="value"),
 )
-def count_open_slots_over_time(city, concern="Personalausweis - Antrag"):
-    open = repository.SlotRepository(
-        db=sqlite3.connect(f"db/{city.lower()}.db")
-    ).count_per_timestamp(
+def count_open_slots_over_time(city, concern="Personalausweis - Antrag", office=None):
+    print(
+        concern,
+        city,
+        office,
+        "Fetching from db at",
+        pd.Timestamp.now().strftime("%H:%M"),
+    )
+
+    open = viztool.create_time_series(
+        df=viztool.read_data_from_csv(),
         city=city,
         concern=concern,
-        from_csv=True,
+        office=office,
+        exclude_office=None,
     )
 
     first_timestamp = open["timestamp"].min().strftime("%d.%m.")
@@ -45,7 +64,7 @@ def count_open_slots_over_time(city, concern="Personalausweis - Antrag"):
         open,
         x="timestamp",
         y="count",
-        title=f"{concern} in {city}",
+        title=f"{concern} in {city} {office if office else ''}",
         labels={
             "count": "Anzahl offener Termine",
             "timestamp": f"Zeitraum vom {first_timestamp} bis zum {last_timestamp}",
@@ -70,6 +89,19 @@ def update_graph(city, concern):
         labels={"offen": "Anzahl offener Termine", "office": "Bürgerbüro"},
         text_auto=True,
         # color="buergerbuero",
+    )
+
+
+@callback(
+    Output(component_id="controls-and-radio-office", component_property="options"),
+    Input(component_id="controls-and-radio-item", component_property="value"),
+    Input(component_id="controls-and-radio-concern", component_property="value"),
+)
+def update_radio_office(city, concern):
+    offices = fetch_slots_from_db(city=city, concern=concern)["office"].unique()
+
+    return [{"label": office, "value": office} for office in offices].append(
+        {"label": "Alle", "value": None}
     )
 
 
@@ -104,6 +136,11 @@ app.layout = html.Div(
                             ],
                             value="Personalausweis - Antrag",
                             id="controls-and-radio-concern",
+                        ),
+                        dcc.RadioItems(
+                            id="controls-and-radio-office",
+                            # options=[],
+                            # value="",
                         ),
                     ],
                     className="controls",
