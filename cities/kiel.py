@@ -2,9 +2,6 @@ import sqlite3
 from bs4 import BeautifulSoup
 from repository.SlotRepository import SlotRepository
 from scraper.browser import Browser
-import slots.slots as slots
-from slots.slots import Slot as Slot
-import db.database as db
 from datetime import datetime
 
 
@@ -85,7 +82,7 @@ def kiel(concern: str = "personalausweis_antrag"):
     slot_repository.print(report, city="Kiel", concern=concern_name)
 
 
-def get_open_slots_from_kiel(concern) -> list[Slot]:
+def get_open_slots_from_kiel(concern):
     all_open_slots = []
 
     try:

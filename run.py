@@ -1,15 +1,7 @@
 import sys
-from cities.bremen import bremen
 from cities.dresden import dresden
 from cities.duesseldorf import duesseldorf
-from cities.duesseldorf import debug
-from cities.duesseldorf import init
-from cities.hannover import hannover
 from cities.kiel import kiel
-from cities.magdeburg import magdeburg
-from cities.mainz import mainz
-from cities.wiesbaden import wiesbaden
-from cities.wuppertal import wuppertal
 from datetime import datetime
 
 
@@ -19,19 +11,12 @@ CONCERNS = {
     "abmeldung": "Abmeldung",
     "personalausweis_antrag": "Personalausweis - Antrag",
     "reisepass_antrag": "Reisepass - Antrag",
-    "meldebescheinigung": "Meldebescheinigung",
 }
 
 CITIES = [
-    "bremen",
     "dresden",
     "duesseldorf",
-    "hannover",
     "kiel",
-    "magdeburg",
-    "mainz",
-    "wiesbaden",
-    "wuppertal",
 ]
 
 colors = {
@@ -50,10 +35,6 @@ colors = {
 def main():
 
     try:
-
-        if len(sys.argv) == 2 and sys.argv[1] == "init":
-            init(cities=CITIES)
-            return
         if len(sys.argv) != 3:
             print("Usage: python run.py <city> <concern>")
             print()
@@ -84,24 +65,12 @@ def main():
             return
 
         # print(f"Running {city} for {concern} at: {datetime.now()}")
-        if city == "bremen":
-            bremen(concern)
-        elif city == "dresden":
+        if city == "dresden":
             dresden(concern)
         elif city == "duesseldorf":
             duesseldorf(concern)
-        elif city == "hannover":
-            hannover(concern)
         elif city == "kiel":
             kiel(concern)
-        elif city == "magdeburg":
-            magdeburg(concern)
-        elif city == "mainz":
-            mainz(concern)
-        elif city == "wiesbaden":
-            wiesbaden(concern)
-        elif city == "wuppertal":
-            wuppertal(concern)
         else:
             print(f"City not found: {city}")
 
@@ -111,10 +80,6 @@ def main():
             f'{colors["fail"]}{datetime.now().strftime("%H:%M")} Error {type(e).__name__}{colors["end"]}'
         )
         # raise e
-
-    # try again
-    # print("Trying again...")
-    # main()
 
 
 if __name__ == "__main__":

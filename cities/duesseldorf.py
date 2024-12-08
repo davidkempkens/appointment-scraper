@@ -1,8 +1,5 @@
 import sqlite3
 from scraper.browser import Browser
-import slots.slots as slots
-from slots.slots import Slot as Slot
-import db.database as db
 from repository.SlotRepository import SlotRepository
 
 DUESSELDORF = {
@@ -96,32 +93,7 @@ DUESSELDORF = {
 }
 
 
-def duesseldorf_old():
-    duesseldorf = get_open_slots_from_duesseldorf(
-        area="einwohnerangelegenheiten",
-        concern="ausweise",
-        sub_concern="personalausweis_antrag",
-    )
-    db.save_slots_per_city(duesseldorf, "Duesseldorf")
-
-    # db_duesseldorf = sqlite3.connect("db/duesseldorf.db")
-    # db.save_slots_per_city(duesseldorf, city="Duesseldorf", db=db_duesseldorf)
-
-
-def debug(sub_concern="personalausweis_antrag"):
-    duesseldorf(sub_concern)
-
-def init(cities):
-
-    for city in cities:
-        repo = SlotRepository(db=sqlite3.connect(f"db/{city}.db"))
-        repo.reset_db()
-
-
 def duesseldorf(sub_concern="personalausweis_antrag"):
-
-    # SlotRepository(db=sqlite3.connect("db/duesseldorf.db")).reset_db()
-    # return
 
     if sub_concern in ["anmeldung", "ummeldung", "adressaenderung", "abmeldung"]:
         concern = "meldeangelegenheiten"
@@ -158,11 +130,10 @@ def duesseldorf(sub_concern="personalausweis_antrag"):
         online_slots=online_slots, city="Duesseldorf", concern=concern_name
     )
 
-    # slot_repo.print(report, city="Duesseldorf", concern=concern_name, verbose=True)
     slot_repo.print(report, city="Duesseldorf", concern=concern_name)
 
 
-def get_open_slots_from_duesseldorf(area, concern, sub_concern) -> list[Slot]:
+def get_open_slots_from_duesseldorf(area, concern, sub_concern):
     all_open_slots = []
 
     try:

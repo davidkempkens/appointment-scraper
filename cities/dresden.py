@@ -1,9 +1,6 @@
 import sqlite3
 from scraper.browser import Browser
-import slots.slots as slots
-from slots.slots import Slot as Slot
 from repository.SlotRepository import SlotRepository
-import db.database as db
 
 DRESDEN = {
     "offices": {
@@ -89,7 +86,7 @@ def dresden(sub_concern="personalausweis_antrag"):
     slot_repo.print(report, city="Dresden", concern=concern_name)
 
 
-def get_open_slots_from_dresden(concern, sub_concern) -> list[Slot]:
+def get_open_slots_from_dresden(concern, sub_concern):
     all_open_slots = []
 
     try:
