@@ -5,33 +5,10 @@ from model.Slot import Slot
 
 
 class SlotRepository:
-    def __init__(self, db=sqlite3.connect("db/database.db")):
+    def __init__(self, db: sqlite3.Connection):
         self.db = db
         self.cur = db.cursor()
         self.cur.execute("PRAGMA foreign_keys = ON;")
-
-    def initCities(self, cities):
-        for city in cities:
-            print(f"Initializing city: {city}")
-            self.db = sqlite3.connect(f"db/{city}.db")
-            self.reset_db()
-
-    def reset_db(self, keep_connection=False):
-
-        # print sql commands
-        self.db.set_trace_callback(print)
-
-        # drop tables
-        # self.cur.execute("DROP TABLE IF EXISTS Availabilities;")
-        # self.cur.execute("DROP TABLE IF EXISTS Slots;")
-
-        # create tables
-        with open("schema.sql") as f:
-            schema = f.read()
-            self.cur.executescript(schema)
-
-        if not keep_connection:
-            self.__commit_and_close()
 
     def __commit_and_close(self):
         self.db.commit()
@@ -122,57 +99,6 @@ class SlotRepository:
 
         return df
 
-    def mean_count_over_time(
-        self,
-        city: str,
-        concern: str | None,
-        office: str | None = None,
-        exclude_office: str | None = None,
-        from_csv: bool = False,
-    ):
-        mean_per_office = pd.Series(dtype=float)
-
-        for office in self.get_offices(city=city):
-            mean = self.count_per_timestamp(
-                city=city, concern=concern, office=office, exclude_office=exclude_office
-            ).mean()["count"]
-
-            mean_per_office[office] = mean
-
-        return mean_per_office.sort_values(ascending=False)
-
-    def save_count_per_timestamp(self, city: str, concern: str | None):
-        self.count_per_timestamp(city, concern).to_csv(f"db/count_{city}_{concern}.csv")
-
-    def count_per_timestamp(
-        self,
-        city: str,
-        concern: str | None,
-        office: str | None = None,
-        exclude_office: str | None = None,
-        from_csv: bool = False,
-    ):
-        if from_csv:
-            return pd.read_csv(
-                f"db/count_{city}_{concern}.csv", parse_dates=["timestamp"]
-            )
-
-        df = self.get_all(city, concern, office, exclude_office)
-        # get all unique timestamps from available and taken
-        timestamps = pd.concat([df["available"], df["taken"]]).sort_values().unique()
-        count = pd.Series(dtype=int)
-        for timestamp in timestamps:
-            # count slots for each timestamp
-            count_per_timestamp = df[
-                (df["available"] <= timestamp)
-                & ((df["taken"] >= timestamp) | (df["taken"].isnull()))
-            ].shape[0]
-            count.at[timestamp] = count_per_timestamp
-
-        count_per_timestamp = pd.DataFrame({"timestamp": timestamps, "count": count})
-
-        return count_per_timestamp
-
     def synchronize_slots(self, online_slots, city, concern, debug=False):
 
         if debug:
@@ -246,8 +172,6 @@ class SlotRepository:
         newly_inserted_availabilities = self.__insert_new_slots_to_db(
             newly_available_slots_online_not_in_open_db
         )
-
-        self.save_count_per_timestamp(city, concern)
 
         self.__commit_and_close()
 

@@ -63,9 +63,6 @@ DRESDEN = {
 
 def dresden(sub_concern="personalausweis_antrag"):
 
-    # SlotRepository(db=sqlite3.connect("db/dresden.db")).reset_db()
-    # return
-
     concern = "personaldokumente"
 
     if sub_concern in ["anmeldung", "ummeldung", "abmeldung", "meldebescheinigung"]:

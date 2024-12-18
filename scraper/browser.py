@@ -119,9 +119,6 @@ class Browser(webdriver.Chrome):
             EC.element_to_be_clickable((By.XPATH, f"//*[@{attribute}='{value}']"))
         )
 
-    def get_element_with_id(self, id, time=3):
-        return WebDriverWait(self, time).until(EC.element_to_be_clickable((By.ID, id)))
-
     def get_elements_with_class(self, class_name, time=3):
         try:
             return WebDriverWait(self, time).until(
@@ -157,46 +154,6 @@ class Browser(webdriver.Chrome):
             self.close()
 
         # return the list of all open slots for all offices
-        return open_slots
-
-    def get_open_slots_for_one_office_old(self, office, city, concern) -> list[Slot]:
-
-        open_slots = []
-
-        buttons = self.get_elements_with_class("suggest_btn")
-
-        if buttons == []:
-            return open_slots
-
-        for button in buttons:
-
-            # the button is disabled if the slot is already taken
-            if button.get_attribute("disabled") == "true":
-                # does not need to be saved
-                continue
-
-            # the title of the button is the time of the slot
-            # in the format "HH:MM"
-            time = button.get_attribute("title")
-
-            # <form>
-            #     <input type="hidden" name="date" value="20210826">
-            #     ...
-            #    <button class="suggest_btn" title="08:00" disabled>
-            # </form>
-            date = (
-                button.find_element(By.XPATH, "..")
-                .find_element(By.NAME, "date")
-                .get_attribute("value")
-            )
-
-            # build datetime object from the day and the time
-            timeslot = datetime.strptime(date + " " + time, "%Y%m%d %H:%M")
-
-            # add the office and the date to the list of open slots
-            open_slots.append(Slot(office, city, timeslot, concern))
-
-        # return the list of open slots for this one office
         return open_slots
 
     def get_open_slots_for_one_office(self, office, city, concern) -> list[Slot]:
@@ -235,47 +192,3 @@ class Browser(webdriver.Chrome):
 
         # Return the list of open slots for this one office
         return open_slots
-
-    def get_open_slots_from_element(self, element) -> list[Slot]:
-
-        open_slots = []
-
-        for div in element:
-            soup = BeautifulSoup(div.get_attribute("outerHTML"), "html.parser")
-
-            buttons = soup.find_all("button", class_="card")
-
-            for button in buttons:
-
-                # get the name of the office from the h4 tag
-                office = button.find_previous("h4").text.split(" ")[-1]
-
-                # get the date and time of the slot
-                date_time = (
-                    button.get("onclick")
-                    .split("'")[1]
-                    .replace("%3a", ":")
-                    .replace("%2b", "+")
-                )
-                # 2024-11-11T13:20:00+01:00
-
-                # build datetime object from the day and the time
-                date_time = datetime.strptime(date_time, "%Y-%m-%dT%H:%M:%S%z")
-
-                slot = Slot(office, date_time)
-                open_slots.append(slot)
-
-        return open_slots
-
-    def get_element_by_xpath(self, xpath, time=3):
-        return WebDriverWait(self, time).until(
-            EC.element_to_be_clickable((By.XPATH, xpath))
-        )
-
-    def get_element_by_css_selector(self, selector, time=3):
-        try:
-            return WebDriverWait(self, time).until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, selector))
-            )
-        except:
-            return None

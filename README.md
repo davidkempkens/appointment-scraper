@@ -2,27 +2,9 @@
 
 ## Setup
 
-Create a conda environment and activate it.
-
-```bash
-conda env create -f environment.yml
-conda activate scraping
-```
-
 Create a virtual environment and activate it.
 
-Windows:
-
 ```bash
-python -m venv venv
-source venv/Scripts/activate
-```
-
-Linux:
-
-```bash
-# on some systems you need to install python3.10-venv
-apt install python3.10-venv
 python3 -m venv venv
 source venv/bin/activate
 
@@ -71,39 +53,24 @@ rm chromedriver_linux64.zip
 echo "Installed ChromeDriver version:"
 chromedriver --version
 
-
-curl -o chromedriver.zip https://storage.googleapis.com/chrome-for-testing-public/129.0.6668.100/linux64/chromedriver-linux64.zip
 curl -o chromedriver.zip https://storage.googleapis.com/chrome-for-testing-public/130.0.6723.91/linux64/chromedriver-linux64.zip
 unzip chromedriver.zip
-```
-
-## Initialize Databases
-
-```bash
-python run.py init
 ```
 
 ## Run Main Script for each city
 
 ```bash
-python run.py Duesseldorf
+python main.py duesseldorf personalausweis_antrag
 ```
 
-## Run Main Script every minute for each city
+## Run Main Script every minute
 
 ```bash
-./script.sh Duesseldorf
+./loop.sh duesseldorf personalausweis_antrag
 ```
 
-## Run Dashboard
+## Run Main Script every minute for five conerns in a city
 
 ```bash
-python app.py
-```
-
-Run Tests
-
-```bash
-python -m unittest -v test.db
-python -m unittest -v test.slots
+./start.sh duesseldorf
 ```

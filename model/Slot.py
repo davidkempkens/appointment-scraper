@@ -40,16 +40,12 @@ class Slot:
 
     @classmethod
     def make_from_db(cls, row):
-        id = row[0]
+        s_id = row[0]
         office = row[1]
         city = row[2]
         timeslot = row[3]
         concern = row[4]
 
         instance = cls(office, city, timeslot, concern)
-        instance.id = id
+        instance.id = s_id
         return instance
-
-    def set_id(self, id):
-        self.id = id
-        return self

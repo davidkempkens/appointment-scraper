@@ -36,15 +36,11 @@ def main():
 
     try:
         if len(sys.argv) != 3:
-            print("Usage: python run.py <city> <concern>")
-            print()
-
-            print("Example: python run.py dresden anmeldung")
-
+            print("Usage: python main.py <city> <concern>", end="\n\n")
+            print("Example: python main.py dresden anmeldung")
             print("Available cities:")
             for city in CITIES:
                 print(city)
-
             print()
             print("Available concerns:")
             for concern in CONCERNS:
@@ -63,22 +59,18 @@ def main():
             print(f"Concern not found: {concern}")
             return
 
-        # print(f"Running {city} for {concern} at: {datetime.now()}")
         if city == "dresden":
             dresden(concern)
         elif city == "duesseldorf":
             duesseldorf(concern)
         elif city == "kiel":
             kiel(concern)
-        else:
-            print(f"City not found: {city}")
 
     except Exception as e:
 
         print(
             f'{colors["fail"]}{datetime.now().strftime("%H:%M")} Error {type(e).__name__}{colors["end"]}'
         )
-        # raise e
 
 
 if __name__ == "__main__":
