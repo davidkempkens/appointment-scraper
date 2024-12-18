@@ -39,8 +39,7 @@ def main():
             print("Usage: python run.py <city> <concern>")
             print()
 
-            print("Example: python run.py bremen anmeldung")
-            print()
+            print("Example: python run.py dresden anmeldung")
 
             print("Available cities:")
             for city in CITIES:
